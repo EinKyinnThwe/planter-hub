@@ -1,20 +1,25 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import '@react-native-firebase/app';
+import React, { useEffect } from 'react';
+import AppNavigator from './src/navigation/AppNavigator';
+import { CartProvider } from './src/context/CartContext';
+import { FavoritesProvider } from './src/context/FavoritesContext';
+import { configureGoogleSignIn } from './src/config/googleSignIn';
+
+import { NativeModules } from 'react-native';
+console.log('RNFBAppModule:', !!NativeModules.RNFBAppModule);
+console.log('RNFBAuthModule:', !!NativeModules.RNFBAuthModule);
+console.log('NativeModules keys sample:', Object.keys(NativeModules).filter(k => k.includes('RNFB') || k.includes('Auth')));
 
 export default function App() {
+  useEffect(() => {
+    configureGoogleSignIn();
+  }, []);
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <CartProvider>
+      <FavoritesProvider>
+        <AppNavigator />
+      </FavoritesProvider>
+    </CartProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
