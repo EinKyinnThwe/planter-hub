@@ -6,16 +6,15 @@ import {
   serverTimestamp,
 } from '@react-native-firebase/firestore';
 
+const existsSnap = (snapshot) =>
+  typeof snapshot.exists === 'function' ? snapshot.exists() : snapshot.exists;
+
 export const ensureUserProfile = async (user, extra = {}) => {
   const db = getFirestore();
   const userRef = doc(db, 'users', user.uid);
   const snapshot = await getDoc(userRef);
 
-  // RN Firebase: exists can be a property or a method depending on version
-  const exists =
-    typeof snapshot.exists === 'function' ? snapshot.exists() : snapshot.exists;
-
-  if (exists) {
+  if (existsSnap(snapshot)) {
     return { isNewUser: false };
   }
 
@@ -24,9 +23,22 @@ export const ensureUserProfile = async (user, extra = {}) => {
     email: user.email,
     displayName: user.displayName || extra.displayName || null,
     photoURL: user.photoURL || null,
+    favoriteIds: [],
     createdAt: serverTimestamp(),
     ...extra,
   });
 
   return { isNewUser: true };
+};
+
+export const fetchUserProfile = async (uid) => {
+  const db = getFirestore();
+  const snapshot = await getDoc(doc(db, 'users', uid));
+  if (!existsSnap(snapshot)) return null;
+  return { id: snapshot.id, ...snapshot.data() };
+};
+
+export const updateUserProfile = async (uid, updates) => {
+  const db = getFirestore();
+  await updateDoc(doc(db, 'users', uid), updates);
 };

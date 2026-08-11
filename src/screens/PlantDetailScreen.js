@@ -13,10 +13,12 @@ import QuantityStepper from '../components/QuantityStepper';
 import useCart from '../hooks/useCart';
 import useFavorites from '../hooks/useFavorites';
 import { COLORS, SPACING, FONT_SIZES, RADIUS } from '../constants/theme';
+import useCheckout from '../hooks/useCheckout';
+import ChatScreen from './ChatScreen';
 
 const PlantDetailScreen = ({ route, navigation }) => {
   const { plant } = route.params;
-  const { addToCart } = useCart();
+  const { addToCart, totalItems } = useCart();
   const { isFavorite, toggleFavorite } = useFavorites();
   const [quantity, setQuantity] = useState(1);
 
@@ -28,10 +30,9 @@ const PlantDetailScreen = ({ route, navigation }) => {
     Alert.alert('Added to cart', `${quantity} × ${plant.name} added.`);
   };
 
-  const handleBuyNow = () => {
-    addToCart(plant, quantity);
-    Alert.alert('Buy now', 'Checkout is not wired up yet — UI only for now.');
-  };
+  const { checkout, loading, error } = useCheckout(() => {
+    navigation.navigate('Main', { screen: 'History' });
+  });
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -49,7 +50,14 @@ const PlantDetailScreen = ({ route, navigation }) => {
             onPress={() => navigation.navigate('Cart')}
             hitSlop={8}
           >
-            <Text style={styles.iconText}>🛍️</Text>
+            <View>
+              <Text style={styles.iconText}>🛒</Text>
+              {totalItems > 0 && (
+                <View style={styles.cartBadge}>
+                  <Text style={styles.cartBadgeText}>{totalItems}</Text>
+                </View>
+              )}
+            </View>
           </TouchableOpacity>
           <TouchableOpacity style={styles.iconButton} hitSlop={8}>
             <Text style={styles.iconText}>⋯</Text>
@@ -111,14 +119,16 @@ const PlantDetailScreen = ({ route, navigation }) => {
 
       {/* Sticky footer buttons */}
       <View style={styles.footer}>
-        <TouchableOpacity style={styles.chatButton} hitSlop={6}>
+        <TouchableOpacity style={styles.chatButton} hitSlop={6} onPress={() => navigation.navigate('Chat')}>
           <Text style={styles.chatIcon}>💬</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.addToCartButton} onPress={handleAddToCart}>
           <Text style={styles.addToCartText}>Add to cart 🔒</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.buyButton} onPress={handleBuyNow}>
-          <Text style={styles.buyButtonText}>Buy ${total}</Text>
+        <TouchableOpacity style={styles.buyButton} onPress={checkout} disabled={loading}>
+          <Text style={styles.buyButtonText}>
+            {loading ? 'Processing…' : `Buy $${total}`}
+          </Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -127,6 +137,7 @@ const PlantDetailScreen = ({ route, navigation }) => {
 
 const styles = StyleSheet.create({
   safeArea: {
+	marginTop: 24,
     flex: 1,
     backgroundColor: COLORS.background,
   },
@@ -146,6 +157,23 @@ const styles = StyleSheet.create({
   iconText: {
     fontSize: FONT_SIZES.lg,
     color: COLORS.text,
+  },
+  cartBadge: {
+    position: 'absolute',
+    top: -4,
+    right: -8,
+    backgroundColor: COLORS.primary,
+    borderRadius: 10,
+    minWidth: 16,
+    height: 16,
+    paddingHorizontal: 3,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  cartBadgeText: {
+    color: COLORS.white,
+    fontSize: 10,
+    fontWeight: '700',
   },
   container: {
     paddingHorizontal: SPACING.lg,

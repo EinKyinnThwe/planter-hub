@@ -43,6 +43,7 @@ const FavoriteScreen = ({ navigation }) => {
 
 const styles = StyleSheet.create({
   safeArea: {
+    marginTop: 24,
     flex: 1,
     backgroundColor: COLORS.background,
   },

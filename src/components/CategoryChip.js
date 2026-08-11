@@ -9,16 +9,24 @@ const CategoryChip = ({ label, active, onPress }) => {
       onPress={onPress}
       activeOpacity={0.8}
     >
-      <Text style={[styles.label, active && styles.labelActive]}>{label}</Text>
+      <Text
+        style={[styles.label, active && styles.labelActive]}
+        numberOfLines={1}
+      >
+        {label}
+      </Text>
     </TouchableOpacity>
   );
 };
 
 const styles = StyleSheet.create({
   chip: {
+    height: 40,
     borderRadius: RADIUS.pill,
     paddingHorizontal: SPACING.md,
-    paddingVertical: SPACING.sm,
+    alignItems: 'center',
+    justifyContent: 'center',
+    alignSelf: 'flex-start', // never stretch to the row's cross-axis height
     backgroundColor: COLORS.chipInactiveBg,
     borderWidth: 1,
     borderColor: COLORS.chipInactiveBorder,

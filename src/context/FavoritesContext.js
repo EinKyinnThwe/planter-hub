@@ -1,14 +1,58 @@
-import React, { createContext, useState } from 'react';
+// src/context/FavoritesContext.js
+// Favorites now live in Firestore (users/{uid}.favoriteIds) instead of
+// local-only state, so they survive sign-out → sign-back-in. Falls back to
+// empty/no-op behavior while there's no logged-in user yet.
+
+import React, { createContext, useEffect, useState } from 'react';
+import useAuthUser from '../hooks/useAuthUser';
+import {
+  subscribeToFavorites,
+  addFavorite,
+  removeFavorite,
+} from '../services/favoritesService';
 
 export const FavoritesContext = createContext(null);
 
 export const FavoritesProvider = ({ children }) => {
+  const { user } = useAuthUser();
   const [favoriteIds, setFavoriteIds] = useState([]);
 
-  const toggleFavorite = (plantId) => {
-    setFavoriteIds((prev) =>
-      prev.includes(plantId) ? prev.filter((id) => id !== plantId) : [...prev, plantId]
+  useEffect(() => {
+    if (!user) {
+      setFavoriteIds([]); // signed out — nothing to show
+      return;
+    }
+
+    const unsubscribe = subscribeToFavorites(
+      user.uid,
+      (ids) => setFavoriteIds(ids),
+      (err) => console.warn('Favorites listener error:', err.message)
     );
+
+    return unsubscribe;
+  }, [user]);
+
+  const toggleFavorite = async (plantId) => {
+    if (!user) return;
+
+    const isCurrentlyFavorite = favoriteIds.includes(plantId);
+    // Optimistic update — the onSnapshot listener will reconcile shortly after.
+    setFavoriteIds((prev) =>
+      isCurrentlyFavorite ? prev.filter((id) => id !== plantId) : [...prev, plantId]
+    );
+
+    try {
+      if (isCurrentlyFavorite) {
+        await removeFavorite(user.uid, plantId);
+      } else {
+        await addFavorite(user.uid, plantId);
+      }
+    } catch (err) {
+      // Revert the optimistic update if the write failed.
+      setFavoriteIds((prev) =>
+        isCurrentlyFavorite ? [...prev, plantId] : prev.filter((id) => id !== plantId)
+      );
+    }
   };
 
   const isFavorite = (plantId) => favoriteIds.includes(plantId);

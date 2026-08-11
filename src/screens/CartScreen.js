@@ -1,22 +1,27 @@
+// src/screens/CartScreen.js
+
 import React from 'react';
-import { SafeAreaView, View, Text, FlatList, StyleSheet, Alert } from 'react-native';
+import { SafeAreaView, View, Text, FlatList, StyleSheet } from 'react-native';
 
 import ScreenHeader from '../components/ScreenHeader';
 import CartItemRow from '../components/CartItemRow';
 import CustomButton from '../components/CustomButton';
 import useCart from '../hooks/useCart';
+import useCheckout from '../hooks/useCheckout';
 import { COLORS, SPACING, FONT_SIZES } from '../constants/theme';
 
 const CartScreen = ({ navigation }) => {
   const { items, updateQuantity, removeFromCart, totalPrice } = useCart();
 
-  const handleCheckout = () => {
-    Alert.alert('Checkout', 'Checkout is not wired up yet — UI only for now.');
-  };
+  const { checkout, loading, error } = useCheckout(() => {
+    // Order saved, cart cleared — jump straight to History so the person
+    // sees the order they just placed.
+    navigation.navigate('Main', { screen: 'History' });
+  });
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <ScreenHeader title="My Cart" showBack onBackPress={() => navigation.goBack()} />
+      <ScreenHeader title="My Cart" showBack />
 
       {items.length === 0 ? (
         <View style={styles.emptyState}>
@@ -40,11 +45,13 @@ const CartScreen = ({ navigation }) => {
           />
 
           <View style={styles.footer}>
+            {error && <Text style={styles.errorText}>{error}</Text>}
+
             <View style={styles.totalRow}>
               <Text style={styles.totalLabel}>Total</Text>
               <Text style={styles.totalValue}>${totalPrice.toFixed(2)}</Text>
             </View>
-            <CustomButton title="C H E C K O U T" onPress={handleCheckout} />
+            <CustomButton title="Checkout" onPress={checkout} loading={loading} />
           </View>
         </>
       )}
@@ -54,6 +61,7 @@ const CartScreen = ({ navigation }) => {
 
 const styles = StyleSheet.create({
   safeArea: {
+	marginTop: 24,
     flex: 1,
     backgroundColor: COLORS.background,
   },
@@ -67,6 +75,12 @@ const styles = StyleSheet.create({
     paddingBottom: SPACING.lg,
     borderTopWidth: 1,
     borderTopColor: COLORS.inputBorder,
+  },
+  errorText: {
+    color: COLORS.danger,
+    fontSize: FONT_SIZES.sm,
+    fontWeight: '600',
+    marginBottom: SPACING.sm,
   },
   totalRow: {
     flexDirection: 'row',

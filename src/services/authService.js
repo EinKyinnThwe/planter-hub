@@ -1,10 +1,10 @@
-// src/services/authService.js
 import {
   getAuth,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signInWithCredential,
   signOut,
+  updateProfile,
   GoogleAuthProvider,
 } from '@react-native-firebase/auth';
 import {
@@ -33,11 +33,7 @@ const friendlyAuthError = (error) => {
 
 export const signUpWithEmail = async (email, password) => {
   try {
-    const cred = await createUserWithEmailAndPassword(
-      getAuth(),
-      email,
-      password
-    );
+    const cred = await createUserWithEmailAndPassword(getAuth(), email, password);
     return { user: cred.user, error: null };
   } catch (error) {
     return { user: null, error: friendlyAuthError(error) };
@@ -57,17 +53,25 @@ export const signInWithGoogle = async () => {
   try {
     await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
     const response = await GoogleSignin.signIn();
-
     if (!isSuccessResponse(response)) {
       return { user: null, error: null };
     }
-
     const { idToken } = response.data;
     const googleCredential = GoogleAuthProvider.credential(idToken);
     const cred = await signInWithCredential(getAuth(), googleCredential);
     return { user: cred.user, error: null };
   } catch (error) {
     return { user: null, error: friendlyAuthError(error) };
+  }
+};
+
+export const updateDisplayName = async (name) => {
+  try {
+    const auth = getAuth();
+    await updateProfile(auth.currentUser, { displayName: name });
+    return { error: null };
+  } catch (error) {
+    return { error: friendlyAuthError(error) };
   }
 };
 

@@ -7,10 +7,20 @@ import {
 } from 'react-native';
 import { COLORS, SPACING, FONT_SIZES } from '../constants/theme';
 
-const CustomButton = ({ title, onPress, loading = false, disabled = false }) => {
+const CustomButton = ({
+  title,
+  onPress,
+  loading = false,
+  disabled = false,
+  variant = 'primary', // 'primary' | 'danger'
+}) => {
   return (
     <TouchableOpacity
-      style={[styles.button, (disabled || loading) && styles.buttonDisabled]}
+      style={[
+        styles.button,
+        variant === 'danger' && styles.buttonDanger,
+        (disabled || loading) && styles.buttonDisabled,
+      ]}
       onPress={onPress}
       activeOpacity={0.8}
       disabled={disabled || loading}
@@ -32,6 +42,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: SPACING.sm,
+  },
+  buttonDanger: {
+    backgroundColor: COLORS.danger,
   },
   buttonDisabled: {
     opacity: 0.6,

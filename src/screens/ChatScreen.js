@@ -6,7 +6,7 @@ import { COLORS, SPACING, FONT_SIZES } from '../constants/theme';
 const ChatScreen = () => {
   return (
     <SafeAreaView style={styles.safeArea}>
-      <ScreenHeader title="Chat" />
+      <ScreenHeader title="Chat" showBack />
       <View style={styles.emptyState}>
         <Text style={styles.emptyEmoji}>💬</Text>
         <Text style={styles.emptyText}>No conversations yet</Text>
@@ -21,6 +21,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.background,
   },
   emptyState: {
+    marginTop: 24,
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',

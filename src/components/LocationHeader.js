@@ -16,7 +16,7 @@ const LocationHeader = ({ city, cartCount, onCartPress, onBellPress }) => {
 
       <View style={styles.icons}>
         <TouchableOpacity style={styles.iconButton} onPress={onCartPress} hitSlop={6}>
-          <Text style={styles.icon}>🛍️</Text>
+          <Text style={styles.icon}>🛒</Text>
           {cartCount > 0 && (
             <View style={styles.badge}>
               <Text style={styles.badgeText}>{cartCount}</Text>

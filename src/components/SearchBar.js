@@ -13,9 +13,6 @@ const SearchBar = ({ value, onChangeText, onFilterPress }) => {
         value={value}
         onChangeText={onChangeText}
       />
-      <TouchableOpacity onPress={onFilterPress} hitSlop={6}>
-        <Text style={styles.filterIcon}>🎚️</Text>
-      </TouchableOpacity>
     </View>
   );
 };

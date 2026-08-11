@@ -19,6 +19,7 @@ import PlantCard from '../components/PlantCard';
 import useCart from '../hooks/useCart';
 import useFavorites from '../hooks/useFavorites';
 import useProducts from '../hooks/useProducts';
+import useNotifications from '../hooks/useNotifications';
 import { CATEGORY_CHIPS, CATEGORIES } from '../data/categories';
 import { COLORS, SPACING, FONT_SIZES } from '../constants/theme';
 
@@ -26,6 +27,7 @@ const HomeScreen = ({ navigation }) => {
   const { totalItems } = useCart();
   const { isFavorite, toggleFavorite } = useFavorites();
   const { products, loading, error } = useProducts(); // live Firestore data
+  const { unreadCount } = useNotifications();
   const [search, setSearch] = useState('');
   const [activeChip, setActiveChip] = useState('All');
 
@@ -58,7 +60,8 @@ const HomeScreen = ({ navigation }) => {
           city="San Jose, California"
           cartCount={totalItems}
           onCartPress={() => navigation.navigate('Cart')}
-          onBellPress={() => {}}
+          bellCount={unreadCount}
+          onBellPress={() => navigation.navigate('Notifications')}
         />
 
         <SearchBar value={search} onChangeText={setSearch} onFilterPress={() => {}} />
@@ -71,7 +74,12 @@ const HomeScreen = ({ navigation }) => {
           onShopPress={() => {}}
         />
 
-        <SectionHeader title="Recommended for You" onSeeAllPress={() => {}} />
+        <SectionHeader
+          title="Recommended for You"
+          onSeeAllPress={() =>
+            navigation.navigate('AllProducts', { title: 'Recommended for You' })
+          }
+        />
         <FlatList
           data={products.slice(0, 6)}
           keyExtractor={(item) => item.id}
@@ -89,7 +97,10 @@ const HomeScreen = ({ navigation }) => {
           )}
         />
 
-        <SectionHeader title="Shop by Category" onSeeAllPress={() => {}} />
+        <SectionHeader
+          title="Shop by Category"
+          onSeeAllPress={() => navigation.navigate('AllProducts', { title: 'Shop by Category' })}
+        />
         <View style={styles.categoryGrid}>
           {CATEGORIES.map((category) => (
             <CategoryGridItem
@@ -100,12 +111,21 @@ const HomeScreen = ({ navigation }) => {
           ))}
         </View>
 
-        <SectionHeader title="Special Offers" onSeeAllPress={() => {}} />
+        <SectionHeader
+          title="Special Offers"
+          onSeeAllPress={() =>
+            navigation.navigate('AllProducts', {
+              title: 'Special Offers',
+              initialCategory: activeChip,
+            })
+          }
+        />
         <FlatList
           data={CATEGORY_CHIPS}
           keyExtractor={(item) => item}
           horizontal
           showsHorizontalScrollIndicator={false}
+          style={styles.chipListWrapper}
           contentContainerStyle={styles.chipList}
           renderItem={({ item }) => (
             <CategoryChip
@@ -171,9 +191,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     paddingHorizontal: SPACING.lg,
   },
+  chipListWrapper: {
+    flexGrow: 0,
+  },
   chipList: {
     paddingHorizontal: SPACING.lg,
     paddingBottom: SPACING.md,
+    alignItems: 'center',
   },
 });
 
