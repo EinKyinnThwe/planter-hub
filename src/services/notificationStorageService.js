@@ -1,16 +1,14 @@
-// src/services/notificationStorageService.js
-// Local notification history — survives app restarts. This is what the
-// Notifications screen actually reads from; Firestore/FCM only deliver
-// the push, this is the persistent record of it.
-
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const STORAGE_KEY = 'planter-hub:notifications';
-const MAX_STORED = 200; // keep the list from growing unbounded forever
+const MAX_STORED = 200;
 
 const toStoredNotification = (remoteMessage) => ({
-  id: remoteMessage.messageId || `local-${Date.now()}-${Math.random().toString(36).slice(2)}`,
-  title: remoteMessage.notification?.title ?? remoteMessage.title ?? 'Notification',
+  id:
+    remoteMessage.messageId ||
+    `local-${Date.now()}-${Math.random().toString(36).slice(2)}`,
+  title:
+    remoteMessage.notification?.title ?? remoteMessage.title ?? 'Notification',
   body: remoteMessage.notification?.body ?? remoteMessage.body ?? '',
   data: remoteMessage.data || {},
   read: false,
@@ -27,7 +25,10 @@ export const getStoredNotifications = async () => {
 };
 
 const writeAll = async (notifications) => {
-  await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(notifications.slice(0, MAX_STORED)));
+  await AsyncStorage.setItem(
+    STORAGE_KEY,
+    JSON.stringify(notifications.slice(0, MAX_STORED))
+  );
 };
 
 export const saveNotificationLocally = async (remoteMessage) => {
@@ -39,7 +40,9 @@ export const saveNotificationLocally = async (remoteMessage) => {
 
 export const markNotificationRead = async (id) => {
   const existing = await getStoredNotifications();
-  const updated = existing.map((n) => (n.id === id ? { ...n, read: true } : n));
+  const updated = existing.map((n) =>
+    n.id === id ? { ...n, read: true } : n
+  );
   await writeAll(updated);
   return updated;
 };

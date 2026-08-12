@@ -1,82 +1,122 @@
 // src/services/pushNotificationService.js
-// All direct FCM + Notifee calls live here — nothing else in the app
-// touches these SDKs directly.
-
+import { Platform, PermissionsAndroid, Alert } from 'react-native';
 import { getApp } from '@react-native-firebase/app';
 import {
   getMessaging,
-  requestPermission as requestFcmPermission,
+  requestPermission,
   AuthorizationStatus,
   getToken,
-  onTokenRefresh as onFcmTokenRefresh,
+  deleteToken,
+  onTokenRefresh,
   onMessage,
   onNotificationOpenedApp,
   getInitialNotification,
+  registerDeviceForRemoteMessages,
+  isDeviceRegisteredForRemoteMessages,
 } from '@react-native-firebase/messaging';
-import notifee, { AndroidImportance, EventType } from '@notifee/react-native';
-import { getFirestore, doc, updateDoc, arrayUnion } from '@react-native-firebase/firestore';
+import {
+  getFirestore,
+  doc,
+  updateDoc,
+  arrayUnion,
+  arrayRemove,
+  Firestore,
+} from '@react-native-firebase/firestore';
 
 const messaging = getMessaging(getApp());
-const ANDROID_CHANNEL_ID = 'default';
 
 export const setupNotificationChannel = async () => {
-  await notifee.createChannel({
-    id: ANDROID_CHANNEL_ID,
-    name: 'Planter Hub Notifications',
-    importance: AndroidImportance.HIGH,
-    sound: 'default',
-  });
+  // No-op without Notifee
 };
 
 export const requestNotificationPermission = async () => {
-  const settings = await notifee.requestPermission();
-  const granted =
-    settings.authorizationStatus === AuthorizationStatus.AUTHORIZED ||
-    settings.authorizationStatus === AuthorizationStatus.PROVISIONAL;
+  try {
+    if (Platform.OS === 'android' && Platform.Version >= 33) {
+      const result = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS
+      );
+      if (result !== PermissionsAndroid.RESULTS.GRANTED) {
+        return false;
+      }
+    }
 
-  if (granted) {
-    await requestFcmPermission(messaging);
+    const status = await requestPermission(messaging);
+    return (
+      status === AuthorizationStatus.AUTHORIZED ||
+      status === AuthorizationStatus.PROVISIONAL
+    );
+  } catch (e) {
+    console.warn('requestNotificationPermission failed', e?.message || e);
+    return false;
   }
-
-  return granted;
 };
 
 export const getFcmDeviceToken = async () => {
   try {
-    console.log("FCM Token:", token);
-    return await getToken(messaging);
-  } catch {
+    // iOS: must register for remote messages before getToken
+    const registered = isDeviceRegisteredForRemoteMessages(messaging);
+    if (!registered) {
+      await registerDeviceForRemoteMessages(messaging);
+    }
+
+    const token = await messaging.getToken();
+    // console.log('FCM Token:', token);
+    // return token;
+    if (token) {
+          console.log('Your Firebase Device Token:', token);
+          return token;
+        } else {
+          console.log('No token received');
+        }
+  } catch (e) {
+    // Simulator / missing aps-environment - expected; never throw
+    console.warn('getFcmDeviceToken failed', e?.message || e);
     return null;
   }
 };
 
+export const deleteFcmToken = async () => {
+    try {
+        await deleteToken(messaging);
+        console.log('Delete Fcm Token Successfully.');
+    } catch (error) {
+        console.warn('Delete Token Fail.', e?.message || e);
+    }
+};
+
 export const saveTokenToProfile = async (uid, token) => {
   if (!uid || !token) return;
-  const db = getFirestore();
-  await updateDoc(doc(db, 'users', uid), {
-    fcmTokens: arrayUnion(token),
-  });
+  try {
+    const db = getFirestore();
+    await updateDoc(doc(db, 'users', uid), {
+      fcmTokens: arrayUnion(token),
+    });
+  } catch (e) {
+    console.warn('saveTokenToProfile failed', e?.message || e);
+  }
+};
+
+
+export const removeTokenFromProfile = async (uid, token) => {
+    if(!uid || !token) return;
+    try {
+        const db = getFirestore();
+        await updateDoc(doc(db, 'users', uid), {
+            fcmTokens: arrayRemove(token),
+        });
+    } catch (error) {
+        console.warn('Fail to delete token from profile.', error?.message || error);
+    }
 };
 
 export const subscribeToTokenRefresh = (onNewToken) => {
-  return onFcmTokenRefresh(messaging, onNewToken);
+  return onTokenRefresh(messaging, onNewToken);
 };
 
 export const displayForegroundNotification = async (remoteMessage) => {
-  await notifee.displayNotification({
-    title: remoteMessage.notification?.title ?? 'Planter Hub',
-    body: remoteMessage.notification?.body ?? '',
-    data: remoteMessage.data,
-    android: {
-      channelId: ANDROID_CHANNEL_ID,
-      importance: AndroidImportance.HIGH,
-      pressAction: { id: 'default' },
-      smallIcon: 'ic_launcher',
-    },
-    ios: {
-      sound: 'default',
-    },
-  });
+  const title = remoteMessage.notification?.title ?? 'Planter Hub';
+  const body = remoteMessage.notification?.body ?? '';
+  Alert.alert(title, body);
 };
 
 export const subscribeToForegroundMessages = (onMessageReceived) => {
@@ -87,16 +127,11 @@ export const subscribeToNotificationOpenedApp = (onOpened) => {
   return onNotificationOpenedApp(messaging, onOpened);
 };
 
-export const getInitialPushNotification = () => getInitialNotification(messaging);
+export const getInitialPushNotification = () =>
+  getInitialNotification(messaging);
 
-export const subscribeToNotifeeEvents = (onPress) => {
-  return notifee.onForegroundEvent(({ type, detail }) => {
-    if (type === EventType.PRESS) {
-      onPress(detail.notification);
-    }
-  });
+export const subscribeToNotifeeEvents = () => {
+  return () => {};
 };
 
-export const setAppBadgeCount = async (count) => {
-  await notifee.setBadgeCount(count);
-};
+export const setAppBadgeCount = async () => {};
