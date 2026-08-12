@@ -21,7 +21,7 @@ const CartScreen = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <ScreenHeader title="My Cart" showBack />
+      <ScreenHeader title="My Cart" showBack onBackPress={() => navigation.goBack()}/>
 
       {items.length === 0 ? (
         <View style={styles.emptyState}>
