@@ -13,6 +13,7 @@ import { COLORS } from '../constants/theme';
 import ChatScreen from '../screens/ChatScreen';
 import CartScreen from '../screens/CartScreen';
 import NotificationsScreen from '../screens/NotificationsScreen';
+import NotificationDetailsScreen from '../screens/NotificationDetailsScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -38,6 +39,7 @@ const AppNavigator = () => {
             <Stack.Screen name="Chat" component={ChatScreen} />
             <Stack.Screen name="AllProducts" component={AllProductsScreen} />
             <Stack.Screen name="Notifications" component={NotificationsScreen} />
+            <Stack.Screen name="NotificationDetails" component={NotificationDetailsScreen} />
           </>
         ) : (
           <>

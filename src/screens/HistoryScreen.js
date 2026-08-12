@@ -1,5 +1,3 @@
-// src/screens/HistoryScreen.js
-
 import React from 'react';
 import { SafeAreaView, View, Text, FlatList, ActivityIndicator, StyleSheet } from 'react-native';
 

@@ -22,7 +22,7 @@ export default function useProducts() {
       }
     );
 
-    return unsubscribe; // detach the listener when the screen unmounts
+    return unsubscribe;
   }, []);
 
   return { products, loading, error };

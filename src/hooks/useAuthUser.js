@@ -1,4 +1,3 @@
-// src/hooks/useAuthUser.js
 import { useEffect, useState } from 'react';
 import { getAuth, onAuthStateChanged } from '@react-native-firebase/auth';
 

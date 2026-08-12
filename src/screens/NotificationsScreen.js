@@ -1,6 +1,12 @@
 import React from 'react';
-import { SafeAreaView, View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
-
+import {
+  SafeAreaView,
+  View,
+  Text,
+  FlatList,
+  TouchableOpacity,
+  StyleSheet,
+} from 'react-native';
 import NotificationListItem from '../components/NotificationListItem';
 import EmptyNotifications from '../components/EmptyNotifications';
 import useNotifications from '../hooks/useNotifications';
@@ -10,14 +16,14 @@ const NotificationsScreen = ({ navigation }) => {
   const {
     notifications,
     unreadCount,
-    markAsRead,
     markAllAsRead,
     removeNotification,
     clearAll,
   } = useNotifications();
 
-  const handlePress = (id) => {
-    markAsRead(id);
+  // Open details — markAsRead runs inside NotificationDetailsScreen / hook
+  const handlePress = (notification) => {
+    navigation.navigate('NotificationDetails', { notification });
   };
 
   const handleViewPlant = (plantId) => {
@@ -30,14 +36,12 @@ const NotificationsScreen = ({ navigation }) => {
         <TouchableOpacity onPress={() => navigation.goBack()} hitSlop={8}>
           <Text style={styles.backArrow}>{'\u2190'}</Text>
         </TouchableOpacity>
-
         <View style={styles.headerTitleBlock}>
           <Text style={styles.headerTitle}>Notifications</Text>
           {unreadCount > 0 && (
             <Text style={styles.headerSubtitle}>{unreadCount} unread</Text>
           )}
         </View>
-
         <View style={{ width: 24 }} />
       </View>
 
@@ -63,7 +67,7 @@ const NotificationsScreen = ({ navigation }) => {
           renderItem={({ item }) => (
             <NotificationListItem
               notification={item}
-              onPress={handlePress}
+              onPress={() => handlePress(item)}
               onDelete={removeNotification}
               onViewPlant={handleViewPlant}
             />

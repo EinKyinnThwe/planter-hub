@@ -14,8 +14,6 @@ const CartScreen = ({ navigation }) => {
   const { items, updateQuantity, removeFromCart, totalPrice } = useCart();
 
   const { checkout, loading, error } = useCheckout(() => {
-    // Order saved, cart cleared — jump straight to History so the person
-    // sees the order they just placed.
     navigation.navigate('Main', { screen: 'History' });
   });
 
