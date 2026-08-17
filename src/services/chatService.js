@@ -1,9 +1,3 @@
-// src/services/chatService.js
-// One support thread per user, at chats/{uid}/messages. The user's own
-// messages use senderId = uid; support/admin replies use senderId = 'admin'
-// (sent from the Firebase Console, an admin dashboard, or a Cloud Function —
-// not from this app).
-
 import {
   getFirestore,
   collection,
@@ -28,11 +22,6 @@ export const sendMessage = async (uid, text) => {
   });
 };
 
-/**
- * Writes a canned support reply into the same thread. senderId is always
- * literally 'admin' — that's what ChatScreen checks to render it on the
- * left, distinct from the user's own messages.
- */
 export const sendAutoReply = async (uid, text) => {
   const db = getFirestore();
   await addDoc(threadRef(db, uid), {
@@ -42,10 +31,6 @@ export const sendAutoReply = async (uid, text) => {
   });
 };
 
-/**
- * Edits the text of a message the user already sent. Marks it `edited: true`
- * so the UI can show an "(edited)" label.
- */
 export const editMessage = async (uid, messageId, newText) => {
   const db = getFirestore();
   await updateDoc(doc(db, 'chats', uid, 'messages', messageId), {
@@ -60,10 +45,7 @@ export const deleteMessage = async (uid, messageId) => {
   await deleteDoc(doc(db, 'chats', uid, 'messages', messageId));
 };
 
-/**
- * Real-time listener for one user's support thread, oldest first.
- * Call the returned function to unsubscribe.
- */
+
 export const subscribeToMessages = (uid, onData, onError) => {
   const db = getFirestore();
   const messagesQuery = query(threadRef(db, uid), orderBy('createdAt', 'asc'));

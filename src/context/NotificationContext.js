@@ -47,20 +47,11 @@ export const NotificationProvider = ({ children }) => {
     (notification) => !notification.read
   ).length;
 
-  /**
-   * Update app badge whenever unread count changes.
-   */
   useEffect(() => {
     setAppBadgeCount(unreadCount).catch(() => {});
   }, [unreadCount]);
-
-  /**
-   * Set Crashlytics user when Firebase user changes.
-   *
-   * IMPORTANT:
-   * Do NOT use crashlytics() here.
-   * analyticsService handles the Firebase Crashlytics instance.
-   */
+  
+  
   useEffect(() => {
     if (!user?.uid) {
       return;
@@ -68,10 +59,7 @@ export const NotificationProvider = ({ children }) => {
 
     setCrashlyticsUserId(user.uid);
   }, [user?.uid]);
-
-  /**
-   * Load locally stored notifications.
-   */
+  //Store local notification
   useEffect(() => {
     let mounted = true;
 
@@ -106,9 +94,6 @@ export const NotificationProvider = ({ children }) => {
     };
   }, []);
 
-  /**
-   * Setup Firebase Cloud Messaging.
-   */
   useEffect(() => {
     if (!user?.uid) {
       return;
@@ -136,9 +121,6 @@ export const NotificationProvider = ({ children }) => {
           return;
         }
 
-        /**
-         * Get current FCM token.
-         */
         const token = await getFcmDeviceToken();
 
         if (token && mounted) {
@@ -147,15 +129,9 @@ export const NotificationProvider = ({ children }) => {
             token
           );
         }
-
-        /**
-         * Subscribe user to global topic.
-         */
         await subscribeToTopic('all-users');
 
-        /**
-         * Handle FCM token changes.
-         */
+        //Handle FCM Token change
         unsubscribeTokenRefresh =
           subscribeToTokenRefresh(
             async (newToken) => {
@@ -176,10 +152,7 @@ export const NotificationProvider = ({ children }) => {
               }
             }
           );
-
-        /**
-         * Handle foreground notifications.
-         */
+        //Handle foreground notifications
         unsubscribeForeground =
           subscribeToForegroundMessages(
             async (remoteMessage) => {
@@ -209,13 +182,6 @@ export const NotificationProvider = ({ children }) => {
               }
             }
           );
-
-        /**
-         * Notifee events.
-         *
-         * Currently this service is a no-op,
-         * but keep the unsubscribe function.
-         */
         unsubscribeNotifeePress =
           subscribeToNotifeeEvents(() => {});
       } catch (error) {
@@ -250,9 +216,7 @@ export const NotificationProvider = ({ children }) => {
     };
   }, [user?.uid]);
 
-  /**
-   * Mark one notification as read.
-   */
+  //Read one notification
   const markAsRead = useCallback(
     async (id) => {
       try {
@@ -270,9 +234,7 @@ export const NotificationProvider = ({ children }) => {
     []
   );
 
-  /**
-   * Mark all notifications as read.
-   */
+  //Read all notification
   const markAllAsRead = useCallback(
     async () => {
       try {
@@ -290,9 +252,7 @@ export const NotificationProvider = ({ children }) => {
     []
   );
 
-  /**
-   * Delete one notification.
-   */
+  //Delete one notification
   const removeNotification = useCallback(
     async (id) => {
       try {
@@ -310,9 +270,7 @@ export const NotificationProvider = ({ children }) => {
     []
   );
 
-  /**
-   * Delete all notifications.
-   */
+  //Delete all notification
   const clearAll = useCallback(
     async () => {
       try {

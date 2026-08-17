@@ -36,16 +36,10 @@ const CartScreen = ({ navigation }) => {
     totalPrice,
   } = useCart();
 
-  /**
-   * Screen analytics.
-   */
   useEffect(() => {
     logScreenView('CartScreen');
   }, []);
 
-  /**
-   * Checkout.
-   */
   const {
     checkout,
     loading,
@@ -56,9 +50,6 @@ const CartScreen = ({ navigation }) => {
     });
   });
 
-  /**
-   * Back button.
-   */
   const handleBack = async () => {
     console.log('Cart back pressed');
 
@@ -71,9 +62,6 @@ const CartScreen = ({ navigation }) => {
     navigation.goBack();
   };
 
-  /**
-   * Increase quantity.
-   */
   const handleIncrease = (item) => {
     try {
       const newQuantity =
@@ -85,8 +73,6 @@ const CartScreen = ({ navigation }) => {
         newQuantity
       );
 
-      // Analytics is intentionally NOT awaited.
-      // It cannot block the cart operation.
       logButtonClick(
         'cart_quantity_increase',
         'CartScreen',
@@ -119,9 +105,6 @@ const CartScreen = ({ navigation }) => {
     }
   };
 
-  /**
-   * Decrease quantity.
-   */
   const handleDecrease = (item) => {
     try {
       const newQuantity =
@@ -168,9 +151,6 @@ const CartScreen = ({ navigation }) => {
     }
   };
 
-  /**
-   * Remove item.
-   */
   const handleRemove = (item) => {
     try {
       console.log(
@@ -208,9 +188,6 @@ const CartScreen = ({ navigation }) => {
     }
   };
 
-  /**
-   * Checkout.
-   */
   const handleCheckout = async () => {
     try {
       console.log(
@@ -247,9 +224,6 @@ const CartScreen = ({ navigation }) => {
     }
   };
 
-  /**
-   * Checkout error.
-   */
   useEffect(() => {
     if (error) {
       logErrorToCrashlytics(

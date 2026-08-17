@@ -18,11 +18,7 @@ import {
 const ORDERS_COLLECTION = 'orders';
 const PRODUCTS_COLLECTION = 'products';
 
-/**
- * Creates an order document from the current cart contents AND increments
- * `sold` on each purchased product by its quantity — same batch, so the
- * order and the sold-count update are atomic.
- */
+
 export const createOrder = async (uid, cartItems, totalPrice) => {
   const db = getFirestore();
   const batch = writeBatch(db);
@@ -35,7 +31,6 @@ export const createOrder = async (uid, cartItems, totalPrice) => {
     quantity,
   }));
 
-  // 1. Create the order doc (generate the ref first so we can batch it).
   const orderRef = doc(collection(db, ORDERS_COLLECTION));
   batch.set(orderRef, {
     uid,
@@ -45,7 +40,6 @@ export const createOrder = async (uid, cartItems, totalPrice) => {
     createdAt: serverTimestamp(),
   });
 
-  // 2. Bump `sold` on every purchased product by its quantity.
   cartItems.forEach(({ plant, quantity }) => {
     const productRef = doc(db, PRODUCTS_COLLECTION, plant.id);
     batch.update(productRef, { 
@@ -59,10 +53,7 @@ export const createOrder = async (uid, cartItems, totalPrice) => {
   return orderRef.id;
 };
 
-/**
- * Real-time listener for one user's own order history, newest first.
- * Call the returned function to unsubscribe.
- */
+
 export const subscribeToOrders = (uid, onData, onError) => {
   const db = getFirestore();
   const ordersQuery = query(

@@ -40,8 +40,6 @@ const ChatScreen = ({ navigation }) => {
   const [editingId, setEditingId] = useState(null);
   const flatListRef = useRef(null);
 
-  // Auto-scroll to the newest message whenever the list changes (a message
-  // arrives from support, or one we just sent lands back via onSnapshot).
   useEffect(() => {
     if (messages.length > 0) {
       // Small delay lets the FlatList finish laying out the new row first.
