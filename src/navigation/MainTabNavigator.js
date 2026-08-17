@@ -12,33 +12,33 @@ import { COLORS, FONT_SIZES } from '../constants/theme';
 const Tab = createBottomTabNavigator();
 
 const TAB_ICONS = {
-  Home: '🏠',
-  Favorite: '♡',
-  Chat: '💬',
-  History: '🕐',
-  Profile: '👤',
+    Home: '🏠',
+    Favorite: '♡',
+    Chat: '💬',
+    History: '🕐',
+    Profile: '👤',
 };
 
 const MainTabNavigator = () => {
-  return (
-    <Tab.Navigator
-      screenOptions={({ route }) => ({
-        headerShown: false,
-        tabBarActiveTintColor: COLORS.primary,
-        tabBarInactiveTintColor: COLORS.textFaint,
-        tabBarLabelStyle: { fontSize: FONT_SIZES.xs, fontWeight: '600' },
-        tabBarIcon: ({ color }) => (
-          <Text style={{ fontSize: FONT_SIZES.lg, color }}>{TAB_ICONS[route.name]}</Text>
-        ),
-      })}
-    >
-      <Tab.Screen name="Home" component={HomeScreen} />
-      <Tab.Screen name="Favorite" component={FavoriteScreen} />
-      <Tab.Screen name="Chat" component={ChatScreen} />
-      <Tab.Screen name="History" component={HistoryScreen} />
-      <Tab.Screen name="Profile" component={ProfileScreen} />
-    </Tab.Navigator>
-  );
+    return (
+        <Tab.Navigator
+        screenOptions={({ route }) => ({
+            headerShown: false,
+            tabBarActiveTintColor: COLORS.primary,
+            tabBarInactiveTintColor: COLORS.textFaint,
+            tabBarLabelStyle: { fontSize: FONT_SIZES.xs, fontWeight: '600' },
+            tabBarIcon: ({ color }) => (
+            <Text style={{ fontSize: FONT_SIZES.lg, color }}>{TAB_ICONS[route.name]}</Text>
+            ),
+        })}
+        >
+        <Tab.Screen name="Home" component={HomeScreen} />
+        <Tab.Screen name="Favorite" component={FavoriteScreen} />
+        <Tab.Screen name="Chat" component={ChatScreen} />
+        <Tab.Screen name="History" component={HistoryScreen} />
+        <Tab.Screen name="Profile" component={ProfileScreen} />
+        </Tab.Navigator>
+    );
 };
 
 export default MainTabNavigator;

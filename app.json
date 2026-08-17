@@ -51,6 +51,7 @@
       "@react-native-firebase/messaging",
       "@react-native-firebase/analytics",
       "@react-native-firebase/crashlytics",
+      "@react-native-firebase/perf",
       [
         "@react-native-google-signin/google-signin",
         {
