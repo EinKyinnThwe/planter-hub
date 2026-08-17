@@ -6,7 +6,10 @@ import {
   setBackgroundMessageHandler,
 } from '@react-native-firebase/messaging';
 import App from './App';
+import crashlytics from '@react-native-firebase/crashlytics';
 import { saveNotificationLocally } from './src/services/notificationStorageService';
+import { useEffect } from 'react';
+
 
 const messaging = getMessaging(getApp());
 

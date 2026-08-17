@@ -1,6 +1,5 @@
 import React from 'react';
 import {
-  SafeAreaView,
   ScrollView,
   View,
   Text,
@@ -9,7 +8,7 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
-
+import { SafeAreaView } from 'react-native-safe-area-context';
 import CustomInput from '../components/CustomInput';
 import CustomButton from '../components/CustomButton';
 import GoogleButton from '../components/GoogleButton';
@@ -19,15 +18,31 @@ import useSignupForm from '../hooks/useSignupForm';
 import useGoogleSignIn from '../hooks/useGoogleSignIn';
 import { COLORS, SPACING, FONT_SIZES } from '../constants/theme';
 
+import {
+  logScreenView,
+  logButtonClick,
+  logErrorToCrashlytics,
+} from '../services/analyticsService';
+
 const SignupScreen = ({ navigation }) => {
-  const goToShop = () => {
-    // Account created, users/{uid} written, "products" seeded if this was
-    // the very first sign-up. Send them straight into the shop.
-    navigation.reset({
-      index: 0,
-      routes: [{ name: 'Login' }],
-    });
-  };
+    
+    React.useEffect(() => {
+        try {
+            logScreenView('SignUpScreen')
+        } catch (error) {
+            console.warn('Sign Up analytics failed!', error);
+        }
+    }, []);
+    
+    
+    const goToShop = () => {
+        console.log('Sign Up Successful!');
+        try {
+            logButtonClick('signup_success', 'SignupScreen');
+        } catch (error) {
+            console.warn('Sign Up Success analytics failed!', error);
+        }
+    };
 
   const {
     email,
@@ -46,6 +61,15 @@ const SignupScreen = ({ navigation }) => {
     loading: googleLoading,
     error: googleError,
   } = useGoogleSignIn(goToShop);
+  
+    const handleSignInPress = () => {
+        try {
+            logButtonClick('go_to_signIn', 'signupScreen');
+        } catch (error) {
+            console.warn('Login analytics failed!', error);
+        }
+        navigation.navigate('Login');
+    };
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -111,7 +135,7 @@ const SignupScreen = ({ navigation }) => {
           <AuthFooterLink
             promptText="Already have an account?"
             actionText="Sign In"
-            onPress={() => navigation.navigate('Login')}
+            onPress={handleSignInPress}
           />
         </ScrollView>
       </KeyboardAvoidingView>

@@ -8,7 +8,7 @@ const SearchBar = ({ value, onChangeText, onFilterPress }) => {
       <Text style={styles.searchIcon}>🔍</Text>
       <TextInput
         style={styles.input}
-        placeholder="what are you looking for"
+        placeholder="What are you looking for..."
         placeholderTextColor={COLORS.placeholder}
         value={value}
         onChangeText={onChangeText}

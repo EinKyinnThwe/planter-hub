@@ -1,7 +1,23 @@
-import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
-import { getAuth, onAuthStateChanged } from '@react-native-firebase/auth';
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
+
+import {
+  getAuth,
+  onAuthStateChanged,
+} from '@react-native-firebase/auth';
+
 import { signOutUser } from '../services/authService';
 import { fetchUserProfile } from '../services/userService';
+
+import {
+  initializeAnalyticsServices,
+  setAnalyticsUser,
+} from '../services/analyticsService';
 
 const AuthContext = createContext({
   user: null,
@@ -21,8 +37,10 @@ export function AuthProvider({ children }) {
       setProfile(null);
       return;
     }
+
     try {
       const data = await fetchUserProfile(firebaseUser.uid);
+
       setProfile({
         uid: firebaseUser.uid,
         email: firebaseUser.email,
@@ -31,11 +49,14 @@ export function AuthProvider({ children }) {
           firebaseUser.displayName ||
           firebaseUser.email?.split('@')[0] ||
           'User',
-        photoURL: data?.photoURL || firebaseUser.photoURL || null,
+        photoURL:
+          data?.photoURL ||
+          firebaseUser.photoURL ||
+          null,
         createdAt: data?.createdAt || null,
         ...data,
       });
-    } catch {
+    } catch (error) {
       setProfile({
         uid: firebaseUser.uid,
         email: firebaseUser.email,
@@ -43,39 +64,131 @@ export function AuthProvider({ children }) {
           firebaseUser.displayName ||
           firebaseUser.email?.split('@')[0] ||
           'User',
-        photoURL: firebaseUser.photoURL || null,
+        photoURL:
+          firebaseUser.photoURL || null,
+        createdAt: null,
       });
     }
   };
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(getAuth(), async (firebaseUser) => {
-      setUser(firebaseUser);
-      await loadProfile(firebaseUser);
-      setLoading(false);
-    });
-    return unsubscribe;
+    let mounted = true;
+
+    const initializeServices = async () => {
+      try {
+        await initializeAnalyticsServices();
+      } catch (error) {
+        console.warn(
+          'Firebase services initialization failed:',
+          error?.message || String(error)
+        );
+      }
+    };
+
+    initializeServices();
+
+    const unsubscribe = onAuthStateChanged(
+      getAuth(),
+      async (firebaseUser) => {
+        if (!mounted) {
+          return;
+        }
+
+        setUser(firebaseUser);
+
+        if (!firebaseUser) {
+          setProfile(null);
+
+          if (mounted) {
+            setLoading(false);
+          }
+
+          return;
+        }
+
+        try {
+          await loadProfile(firebaseUser);
+        } catch (error) {
+          console.warn(
+            'Profile loading failed:',
+            error?.message || String(error)
+          );
+        }
+
+        if (!mounted) {
+          return;
+        }
+
+        try {
+          await setAnalyticsUser(firebaseUser.uid);
+        } catch (error) {
+          console.warn(
+            'Firebase user analytics setup failed:',
+            error?.message || String(error)
+          );
+        }
+
+        if (mounted) {
+          setLoading(false);
+        }
+      }
+    );
+
+    return () => {
+      mounted = false;
+      unsubscribe();
+    };
   }, []);
 
   const refreshProfile = async () => {
-    if (user) await loadProfile(user);
+    if (!user) {
+      return;
+    }
+
+    await loadProfile(user);
   };
 
   const logout = async () => {
-    const { error } = await signOutUser();
-    if (!error) {
+    try {
+      const { error } = await signOutUser();
+
+      if (error) {
+        return { error };
+      }
+
       setUser(null);
       setProfile(null);
+
+      return { error: null };
+    } catch (error) {
+      return {
+        error:
+          error?.message ||
+          'Failed to sign out.',
+      };
     }
-    return { error };
   };
 
   const value = useMemo(
-    () => ({ user, profile, loading, refreshProfile, logout }),
-    [user, profile, loading]
+    () => ({
+      user,
+      profile,
+      loading,
+      refreshProfile,
+      logout,
+    }),
+    [
+      user,
+      profile,
+      loading,
+    ]
   );
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={value}>
+      {children}
+    </AuthContext.Provider>
+  );
 }
 
 export function useAuth() {

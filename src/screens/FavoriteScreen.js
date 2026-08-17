@@ -1,5 +1,6 @@
 import React from 'react';
-import { SafeAreaView, View, Text, FlatList, StyleSheet } from 'react-native';
+import { View, Text, FlatList, StyleSheet } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import ScreenHeader from '../components/ScreenHeader';
 import PlantCard from '../components/PlantCard';
@@ -13,7 +14,7 @@ const FavoriteScreen = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <ScreenHeader title="Favorites" />
+      <ScreenHeader title="Favorites" showBack onBackPress={() => navigation.goBack()}/>
 
       {favoritePlants.length === 0 ? (
         <View style={styles.emptyState}>
@@ -43,7 +44,6 @@ const FavoriteScreen = ({ navigation }) => {
 
 const styles = StyleSheet.create({
   safeArea: {
-    marginTop: 24,
     flex: 1,
     backgroundColor: COLORS.background,
   },

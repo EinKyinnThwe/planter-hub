@@ -1,17 +1,18 @@
 import React from 'react';
-import { SafeAreaView, View, Text, FlatList, ActivityIndicator, StyleSheet } from 'react-native';
+import { View, Text, FlatList, ActivityIndicator, StyleSheet } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import ScreenHeader from '../components/ScreenHeader';
 import OrderCard from '../components/OrderCard';
 import useOrders from '../hooks/useOrders';
 import { COLORS, SPACING, FONT_SIZES } from '../constants/theme';
 
-const HistoryScreen = () => {
+const HistoryScreen = ({navigation}) => {
   const { orders, loading, error } = useOrders();
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <ScreenHeader title="History" />
+      <ScreenHeader title="History" showBack onBackPress={() => navigation.goBack()}/>
 
       {loading ? (
         <View style={styles.centered}>
@@ -40,7 +41,6 @@ const HistoryScreen = () => {
 
 const styles = StyleSheet.create({
   safeArea: {
-    marginTop: 24,
     flex: 1,
     backgroundColor: COLORS.background,
   },

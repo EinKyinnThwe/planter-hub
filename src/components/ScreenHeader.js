@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { COLORS, SPACING, FONT_SIZES } from '../constants/theme';
+import { COLORS, SPACING, FONT_SIZES, RADIUS } from '../constants/theme';
 
 const ScreenHeader = ({
   title,
@@ -55,8 +55,9 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
   },
   backArrow: {
-    fontSize: FONT_SIZES.xl,
+    fontSize: FONT_SIZES.xxl,
     color: COLORS.primary,
+    fontWeight: 'bold',
   },
   title: {
     flex: 1,

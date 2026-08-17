@@ -1,4 +1,3 @@
-// src/screens/NotificationDetailsScreen.js
 import React, { useEffect } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';

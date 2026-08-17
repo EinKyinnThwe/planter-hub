@@ -1,12 +1,12 @@
 import React, { useMemo, useState } from 'react';
 import {
-  SafeAreaView,
   FlatList,
   View,
   Text,
   ActivityIndicator,
   StyleSheet,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 import ScreenHeader from '../components/ScreenHeader';
 import SearchBar from '../components/SearchBar';
@@ -108,7 +108,6 @@ const AllProductsScreen = ({ route, navigation }) => {
 
 const styles = StyleSheet.create({
   safeArea: {
-    marginTop: 24,
     flex: 1,
     backgroundColor: COLORS.background,
   },

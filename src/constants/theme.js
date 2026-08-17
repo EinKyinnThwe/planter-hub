@@ -38,6 +38,7 @@ export const FONT_SIZES = {
   lg: 18,
   xl: 24,
   xxl: 30,
+  xxxl: 45,
 };
 
 export const RADIUS = {

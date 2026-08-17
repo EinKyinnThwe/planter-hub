@@ -1,5 +1,17 @@
-import React, { createContext, useEffect, useState, useCallback } from 'react';
+import React, {
+  createContext,
+  useEffect,
+  useState,
+  useCallback,
+} from 'react';
+
 import useAuthUser from '../hooks/useAuthUser';
+
+import {
+  setCrashlyticsUserId,
+  recordCrashlyticsError,
+} from '../services/analyticsService';
+
 import {
   getStoredNotifications,
   saveNotificationLocally,
@@ -8,6 +20,7 @@ import {
   deleteNotification,
   clearAllNotifications,
 } from '../services/notificationStorageService';
+
 import {
   setupNotificationChannel,
   requestNotificationPermission,
@@ -18,272 +31,319 @@ import {
   displayForegroundNotification,
   subscribeToNotifeeEvents,
   setAppBadgeCount,
+  subscribeToTopic,
 } from '../services/pushNotificationService';
 
 export const NotificationContext = createContext(null);
 
 export const NotificationProvider = ({ children }) => {
   const { user } = useAuthUser();
+
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
   const [permissionGranted, setPermissionGranted] = useState(false);
-  const unreadCount = notifications.filter((n) => !n.read).length;
-  
+
+  const unreadCount = notifications.filter(
+    (notification) => !notification.read
+  ).length;
+
+  /**
+   * Update app badge whenever unread count changes.
+   */
   useEffect(() => {
     setAppBadgeCount(unreadCount).catch(() => {});
   }, [unreadCount]);
-  
-  useEffect(() => {
-    (async () => {
-      const stored = await getStoredNotifications();
-      setNotifications(stored);
-      setLoading(false);
-    })();
-  }, []);
-  
-  useEffect(() => {
-  if (!user) return;
-  let unsubscribeForeground;
-  let unsubscribeTokenRefresh;
-  let unsubscribeNotifeePress;
-  (async () => {
-    await setupNotificationChannel();
-    const granted = await requestNotificationPermission();
-    setPermissionGranted(granted);
-    if (!granted) return;
-    const token = await getFcmDeviceToken();
-    await saveTokenToProfile(user.uid, token);
-    
 
-  unsubscribeTokenRefresh = subscribeToTokenRefresh((newToken) => {
-    saveTokenToProfile(user.uid, newToken);
-  });
-  
-  unsubscribeForeground = subscribeToForegroundMessages(
-    async (remoteMessage) => {
-      await displayForegroundNotification(remoteMessage);
-      const updated = await saveNotificationLocally(remoteMessage);
-    setNotifications(updated);
-  }
-  );
-  
-  
-  unsubscribeNotifeePress = subscribeToNotifeeEvents(() => {});
-  })();
-  
-  return () => {
-      unsubscribeForeground && unsubscribeForeground();
-      unsubscribeTokenRefresh && unsubscribeTokenRefresh();
-      unsubscribeNotifeePress && unsubscribeNotifeePress();
+  /**
+   * Set Crashlytics user when Firebase user changes.
+   *
+   * IMPORTANT:
+   * Do NOT use crashlytics() here.
+   * analyticsService handles the Firebase Crashlytics instance.
+   */
+  useEffect(() => {
+    if (!user?.uid) {
+      return;
+    }
+
+    setCrashlyticsUserId(user.uid);
+  }, [user?.uid]);
+
+  /**
+   * Load locally stored notifications.
+   */
+  useEffect(() => {
+    let mounted = true;
+
+    const loadNotifications = async () => {
+      try {
+        const stored = await getStoredNotifications();
+
+        if (mounted) {
+          setNotifications(stored);
+        }
+      } catch (error) {
+        recordCrashlyticsError(
+          error,
+          'Failed to load stored notifications'
+        );
+
+        console.warn(
+          'Failed to load stored notifications:',
+          error?.message || String(error)
+        );
+      } finally {
+        if (mounted) {
+          setLoading(false);
+        }
+      }
     };
-  }, [user]);
-  
-  
-  const markAsRead = useCallback(async (id) => {
-    const updated = await markNotificationRead(id);
-    setNotifications(updated);
+
+    loadNotifications();
+
+    return () => {
+      mounted = false;
+    };
   }, []);
-  
-  
-  const markAllAsRead = useCallback(async () => {
-    const updated = await markAllNotificationsRead();
-    setNotifications(updated);
-  }, []);
-  
-  
-  const removeNotification = useCallback(async (id) => {
-    const updated = await deleteNotification(id);
-    setNotifications(updated);
-  }, []);
-  
-  
-  const clearAll = useCallback(async () => {
-    const updated = await clearAllNotifications();
-    setNotifications(updated);
-  }, []);
+
+  /**
+   * Setup Firebase Cloud Messaging.
+   */
+  useEffect(() => {
+    if (!user?.uid) {
+      return;
+    }
+
+    let unsubscribeForeground = null;
+    let unsubscribeTokenRefresh = null;
+    let unsubscribeNotifeePress = null;
+    let mounted = true;
+
+    const setupNotifications = async () => {
+      try {
+        await setupNotificationChannel();
+
+        const granted =
+          await requestNotificationPermission();
+
+        if (!mounted) {
+          return;
+        }
+
+        setPermissionGranted(granted);
+
+        if (!granted) {
+          return;
+        }
+
+        /**
+         * Get current FCM token.
+         */
+        const token = await getFcmDeviceToken();
+
+        if (token && mounted) {
+          await saveTokenToProfile(
+            user.uid,
+            token
+          );
+        }
+
+        /**
+         * Subscribe user to global topic.
+         */
+        await subscribeToTopic('all-users');
+
+        /**
+         * Handle FCM token changes.
+         */
+        unsubscribeTokenRefresh =
+          subscribeToTokenRefresh(
+            async (newToken) => {
+              try {
+                if (!newToken || !user?.uid) {
+                  return;
+                }
+
+                await saveTokenToProfile(
+                  user.uid,
+                  newToken
+                );
+              } catch (error) {
+                recordCrashlyticsError(
+                  error,
+                  'Failed to save refreshed FCM token'
+                );
+              }
+            }
+          );
+
+        /**
+         * Handle foreground notifications.
+         */
+        unsubscribeForeground =
+          subscribeToForegroundMessages(
+            async (remoteMessage) => {
+              try {
+                await displayForegroundNotification(
+                  remoteMessage
+                );
+
+                const updated =
+                  await saveNotificationLocally(
+                    remoteMessage
+                  );
+
+                if (mounted) {
+                  setNotifications(updated);
+                }
+              } catch (error) {
+                recordCrashlyticsError(
+                  error,
+                  'Failed to handle foreground notification'
+                );
+
+                console.warn(
+                  'Foreground notification error:',
+                  error?.message || String(error)
+                );
+              }
+            }
+          );
+
+        /**
+         * Notifee events.
+         *
+         * Currently this service is a no-op,
+         * but keep the unsubscribe function.
+         */
+        unsubscribeNotifeePress =
+          subscribeToNotifeeEvents(() => {});
+      } catch (error) {
+        recordCrashlyticsError(
+          error,
+          'Notification setup error'
+        );
+
+        console.warn(
+          'Notification setup error:',
+          error?.message || String(error)
+        );
+      }
+    };
+
+    setupNotifications();
+
+    return () => {
+      mounted = false;
+
+      if (unsubscribeForeground) {
+        unsubscribeForeground();
+      }
+
+      if (unsubscribeTokenRefresh) {
+        unsubscribeTokenRefresh();
+      }
+
+      if (unsubscribeNotifeePress) {
+        unsubscribeNotifeePress();
+      }
+    };
+  }, [user?.uid]);
+
+  /**
+   * Mark one notification as read.
+   */
+  const markAsRead = useCallback(
+    async (id) => {
+      try {
+        const updated =
+          await markNotificationRead(id);
+
+        setNotifications(updated);
+      } catch (error) {
+        recordCrashlyticsError(
+          error,
+          'Failed to mark notification as read'
+        );
+      }
+    },
+    []
+  );
+
+  /**
+   * Mark all notifications as read.
+   */
+  const markAllAsRead = useCallback(
+    async () => {
+      try {
+        const updated =
+          await markAllNotificationsRead();
+
+        setNotifications(updated);
+      } catch (error) {
+        recordCrashlyticsError(
+          error,
+          'Failed to mark all notifications as read'
+        );
+      }
+    },
+    []
+  );
+
+  /**
+   * Delete one notification.
+   */
+  const removeNotification = useCallback(
+    async (id) => {
+      try {
+        const updated =
+          await deleteNotification(id);
+
+        setNotifications(updated);
+      } catch (error) {
+        recordCrashlyticsError(
+          error,
+          'Failed to delete notification'
+        );
+      }
+    },
+    []
+  );
+
+  /**
+   * Delete all notifications.
+   */
+  const clearAll = useCallback(
+    async () => {
+      try {
+        const updated =
+          await clearAllNotifications();
+
+        setNotifications(updated);
+      } catch (error) {
+        recordCrashlyticsError(
+          error,
+          'Failed to clear notifications'
+        );
+      }
+    },
+    []
+  );
+
   return (
-  <NotificationContext.Provider
-  value={{
-          notifications,
-          loading,
-          unreadCount,
-          permissionGranted,
-          markAsRead,
-          markAllAsRead,
-          removeNotification,
-          clearAll,
-        }}
-  >
-        {children}
-      </NotificationContext.Provider>
+    <NotificationContext.Provider
+      value={{
+        notifications,
+        loading,
+        unreadCount,
+        permissionGranted,
+        markAsRead,
+        markAllAsRead,
+        removeNotification,
+        clearAll,
+      }}
+    >
+      {children}
+    </NotificationContext.Provider>
   );
 };
-
-
-
-
-// import React, { createContext, useEffect, useState, useCallback } from 'react';
-// import useAuthUser from '../hooks/useAuthUser';
-// import {
-//   getStoredNotifications,
-//   saveNotificationLocally,
-//   markNotificationRead,
-//   markAllNotificationsRead,
-//   deleteNotification,
-//   clearAllNotifications,
-// } from '../services/notificationStorageService';
-// import {
-//   setupNotificationChannel,
-//   requestNotificationPermission,
-//   getFcmDeviceToken,
-//   saveTokenToProfile,
-//   subscribeToTokenRefresh,
-//   subscribeToForegroundMessages,
-//   displayForegroundNotification,
-//   subscribeToNotifeeEvents,
-//   setAppBadgeCount,
-//   removeTokenFromProfile, // 👈 Required to slice old tokens on account drop
-//   deleteFcmToken,         // 👈 Required to destroy native session keys
-// } from '../services/pushNotificationService';
-
-// export const NotificationContext = createContext(null);
-
-// export const NotificationProvider = ({ children }) => {
-//   const { user } = useAuthUser();
-//   const [notifications, setNotifications] = useState([]);
-//   const [loading, setLoading] = useState(true);
-//   const [permissionGranted, setPermissionGranted] = useState(false);
-
-//   const unreadCount = notifications.filter((n) => !n.read).length;
-
-//   useEffect(() => {
-//     setAppBadgeCount(unreadCount).catch(() => {});
-//   }, [unreadCount]);
-
-//   // 🔴 FIX 1: Isolate and clear layout storage data when user profile unmounts
-//   useEffect(() => {
-//     let mounted = true;
-    
-//     const handleStorageSync = async () => {
-//       if (user) {
-//         // Fetch current user data logs
-//         const stored = await getStoredNotifications();
-//         if (mounted) setNotifications(stored);
-//       } else {
-//         // Purge old user data from state array immediately on logout
-//         await clearAllNotifications();
-//         if (mounted) setNotifications([]);
-//       }
-//       if (mounted) setLoading(false);
-//     };
-
-//     handleStorageSync();
-
-//     return () => {
-//       mounted = false;
-//     };
-//   }, [user]); // 👈 Triggers structural adjustments instantly when user reference swaps
-
-//   // FCM setup after login
-//   useEffect(() => {
-//     if (!user) return;
-
-//     let unsubscribeForeground;
-//     let unsubscribeTokenRefresh;
-//     let unsubscribeNotifeePress;
-//     let activeToken = null; // Track current runtime session token reference
-
-//     (async () => {
-//       try {
-//         await setupNotificationChannel();
-//         const granted = await requestNotificationPermission();
-//         setPermissionGranted(granted);
-
-//         if (!granted) return;
-
-//         const token = await getFcmDeviceToken(); 
-//         if (token) {
-//           activeToken = token;
-//           await saveTokenToProfile(user.uid, token);
-//           console.log('Save Successfully to database.');
-//         }
-
-//         unsubscribeTokenRefresh = subscribeToTokenRefresh((newToken) => {
-//           activeToken = newToken;
-//           saveTokenToProfile(user.uid, newToken);
-//         });
-
-//         unsubscribeForeground = subscribeToForegroundMessages(
-//           async (remoteMessage) => {
-//             await displayForegroundNotification(remoteMessage);
-//             const updated = await saveNotificationLocally(remoteMessage);
-//             setNotifications(updated);
-//           }
-//         );
-
-//         unsubscribeNotifeePress = subscribeToNotifeeEvents(() => {});
-//       } catch (e) {
-//         console.warn('Notification setup failed', e?.message || e);
-//       }
-//     })();
-
-//     return () => {
-//       const currentUid = user?.uid;
-//       const tokenToDestroy = activeToken;
-
-//       unsubscribeForeground && unsubscribeForeground();
-//       unsubscribeTokenRefresh && unsubscribeTokenRefresh();
-//       unsubscribeNotifeePress && unsubscribeNotifeePress();
-
-//       // Silent cleanup in background thread context
-//     //   if (currentUid && tokenToDestroy) {
-//     //     (async () => {
-//     //       try {
-//     //         await removeTokenFromProfile(currentUid, tokenToDestroy);
-//     //         await deleteFcmToken();
-//     //         console.log('Successfully detached and cleared old FCM instance mapping.');
-//     //       } catch (err) {
-//     //         console.warn('Background cleanup unbinding failed', err);
-//     //       }
-//     //     })();
-//     //   }
-//      };
-//   }, [user]);
-
-//   const markAsRead = useCallback(async (id) => {
-//     const updated = await markNotificationRead(id);
-//     setNotifications(updated);
-//   }, []);
-
-//   const markAllAsRead = useCallback(async () => {
-//     const updated = await markAllNotificationsRead();
-//     setNotifications(updated);
-//   }, []);
-
-//   const removeNotification = useCallback(async (id) => {
-//     const updated = await deleteNotification(id);
-//     setNotifications(updated);
-//   }, []);
-
-//   const clearAll = useCallback(async () => {
-//     const updated = await clearAllNotifications();
-//     setNotifications(updated);
-//   }, []);
-
-//   return (
-//     <NotificationContext.Provider
-//       value={{
-//         notifications,
-//         loading,
-//         unreadCount,
-//         permissionGranted,
-//         markAsRead,
-//         markAllAsRead,
-//         removeNotification,
-//         clearAll,
-//       }}
-//     >
-//       {children}
-//     </NotificationContext.Provider>
-//   );
-// };
