@@ -5,10 +5,10 @@ import { COLORS, SPACING, FONT_SIZES, RADIUS } from '../constants/theme';
 const CategoryGridItem = ({ category, onPress }) => {
     return (
         <TouchableOpacity style={styles.container} onPress={onPress} activeOpacity={0.8}>
-        <View style={styles.iconBox}>
-            <Text style={styles.emoji}>{category.emoji}</Text>
-        </View>
-        <Text style={styles.label}>{category.label}</Text>
+            <View style={styles.iconBox}>
+                <Text style={styles.emoji}>{category.emoji}</Text>
+            </View>
+            <Text style={styles.label}>{category.label}</Text>
         </TouchableOpacity>
     );
 };

@@ -7,67 +7,67 @@ import OrderCard from '../components/OrderCard';
 import useOrders from '../hooks/useOrders';
 import { COLORS, SPACING, FONT_SIZES } from '../constants/theme';
 
-const HistoryScreen = ({navigation}) => {
-  const { orders, loading, error } = useOrders();
+const HistoryScreen = ({ navigation }) => {
+    const { orders, loading, error } = useOrders();
 
-  return (
-    <SafeAreaView style={styles.safeArea}>
-      <ScreenHeader title="History" showBack onBackPress={() => navigation.goBack()}/>
+    return (
+        <SafeAreaView style={styles.safeArea}>
+            <ScreenHeader title="History" showBack onBackPress={() => navigation.goBack()} />
 
-      {loading ? (
-        <View style={styles.centered}>
-          <ActivityIndicator size="large" color={COLORS.primary} />
-        </View>
-      ) : error ? (
-        <View style={styles.centered}>
-          <Text style={styles.errorText}>{error}</Text>
-        </View>
-      ) : orders.length === 0 ? (
-        <View style={styles.centered}>
-          <Text style={styles.emptyEmoji}>🕐</Text>
-          <Text style={styles.emptyText}>No orders yet</Text>
-        </View>
-      ) : (
-        <FlatList
-          data={orders}
-          keyExtractor={(order) => order.id}
-          contentContainerStyle={styles.listContent}
-          renderItem={({ item }) => <OrderCard order={item} />}
-        />
-      )}
-    </SafeAreaView>
-  );
+            {loading ? (
+                <View style={styles.centered}>
+                    <ActivityIndicator size="large" color={COLORS.primary} />
+                </View>
+            ) : error ? (
+                <View style={styles.centered}>
+                    <Text style={styles.errorText}>{error}</Text>
+                </View>
+            ) : orders.length === 0 ? (
+                <View style={styles.centered}>
+                    <Text style={styles.emptyEmoji}>🕐</Text>
+                    <Text style={styles.emptyText}>No orders yet</Text>
+                </View>
+            ) : (
+                <FlatList
+                    data={orders}
+                    keyExtractor={(order) => order.id}
+                    contentContainerStyle={styles.listContent}
+                    renderItem={({ item }) => <OrderCard order={item} />}
+                />
+            )}
+        </SafeAreaView>
+    );
 };
 
 const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: COLORS.background,
-  },
-  listContent: {
-    paddingHorizontal: SPACING.lg,
-    paddingTop: SPACING.sm,
-    paddingBottom: SPACING.xl,
-  },
-  centered: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  emptyEmoji: {
-    fontSize: 56,
-    marginBottom: SPACING.sm,
-  },
-  emptyText: {
-    fontSize: FONT_SIZES.md,
-    color: COLORS.textMuted,
-  },
-  errorText: {
-    fontSize: FONT_SIZES.md,
-    color: COLORS.danger,
-    textAlign: 'center',
-    paddingHorizontal: SPACING.lg,
-  },
+    safeArea: {
+        flex: 1,
+        backgroundColor: COLORS.background,
+    },
+    listContent: {
+        paddingHorizontal: SPACING.lg,
+        paddingTop: SPACING.sm,
+        paddingBottom: SPACING.xl,
+    },
+    centered: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    emptyEmoji: {
+        fontSize: 56,
+        marginBottom: SPACING.sm,
+    },
+    emptyText: {
+        fontSize: FONT_SIZES.md,
+        color: COLORS.textMuted,
+    },
+    errorText: {
+        fontSize: FONT_SIZES.md,
+        color: COLORS.danger,
+        textAlign: 'center',
+        paddingHorizontal: SPACING.lg,
+    },
 });
 
 export default HistoryScreen;

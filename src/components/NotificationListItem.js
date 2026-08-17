@@ -18,69 +18,69 @@ const NotificationListItem = ({ notification, onPress, onDelete, onViewPlant }) 
 
     const renderRightActions = (progress, dragX) => {
         const translateX = dragX.interpolate({
-        inputRange: [-80, 0],
-        outputRange: [0, 80],
-        extrapolate: 'clamp',
+            inputRange: [-80, 0],
+            outputRange: [0, 80],
+            extrapolate: 'clamp',
         });
 
         return (
-        <TouchableOpacity
-            style={styles.deleteAction}
-            onPress={() => {
-            swipeableRef.current?.close();
-            onDelete(notification.id);
-            }}
-        >
-            <Animated.Text style={[styles.deleteActionText, { transform: [{ translateX }] }]}>
-            Delete
-            </Animated.Text>
-        </TouchableOpacity>
+            <TouchableOpacity
+                style={styles.deleteAction}
+                onPress={() => {
+                    swipeableRef.current?.close();
+                    onDelete(notification.id);
+                }}
+            >
+                <Animated.Text style={[styles.deleteActionText, { transform: [{ translateX }] }]}>
+                    Delete
+                </Animated.Text>
+            </TouchableOpacity>
         );
     };
 
     return (
         <Swipeable ref={swipeableRef} renderRightActions={renderRightActions} overshootRight={false}>
-        <TouchableOpacity
-            style={[styles.row, !notification.read && styles.rowUnread]}
-            onPress={() => onPress(notification.id)}
-            activeOpacity={0.7}
-        >
-            {!notification.read && <View style={styles.unreadDot} />}
+            <TouchableOpacity
+                style={[styles.row, !notification.read && styles.rowUnread]}
+                onPress={() => onPress(notification.id)}
+                activeOpacity={0.7}
+            >
+                {!notification.read && <View style={styles.unreadDot} />}
 
-            <View style={[styles.iconCircle, { backgroundColor: meta.tint }]}>
-            <Text style={styles.iconEmoji}>{meta.emoji}</Text>
-            </View>
-
-            <View style={styles.content}>
-            <View style={styles.titleRow}>
-                <Text style={styles.title} numberOfLines={1}>
-                {notification.title}
-                </Text>
-                <Text style={styles.time}>{relativeTime(notification.receivedAt)}</Text>
-            </View>
-
-            <Text style={styles.body} numberOfLines={2}>
-                {notification.body}
-            </Text>
-
-            {plantId && (
-                <View style={styles.actionsRow}>
-                <TouchableOpacity
-                    style={styles.actionButton}
-                    onPress={() => onViewPlant(plantId)}
-                >
-                    <Text style={styles.actionButtonText}>View Plant</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                    style={styles.actionButtonGhost}
-                    onPress={() => onDelete(notification.id)}
-                >
-                    <Text style={styles.actionButtonGhostText}>Dismiss</Text>
-                </TouchableOpacity>
+                <View style={[styles.iconCircle, { backgroundColor: meta.tint }]}>
+                    <Text style={styles.iconEmoji}>{meta.emoji}</Text>
                 </View>
-            )}
-            </View>
-        </TouchableOpacity>
+
+                <View style={styles.content}>
+                    <View style={styles.titleRow}>
+                        <Text style={styles.title} numberOfLines={1}>
+                            {notification.title}
+                        </Text>
+                        <Text style={styles.time}>{relativeTime(notification.receivedAt)}</Text>
+                    </View>
+
+                    <Text style={styles.body} numberOfLines={2}>
+                        {notification.body}
+                    </Text>
+
+                    {plantId && (
+                        <View style={styles.actionsRow}>
+                            <TouchableOpacity
+                                style={styles.actionButton}
+                                onPress={() => onViewPlant(plantId)}
+                            >
+                                <Text style={styles.actionButtonText}>View Plant</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                style={styles.actionButtonGhost}
+                                onPress={() => onDelete(notification.id)}
+                            >
+                                <Text style={styles.actionButtonGhostText}>Dismiss</Text>
+                            </TouchableOpacity>
+                        </View>
+                    )}
+                </View>
+            </TouchableOpacity>
         </Swipeable>
     );
 };

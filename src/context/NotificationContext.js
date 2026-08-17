@@ -48,12 +48,12 @@ export const NotificationProvider = ({ children }) => {
     ).length;
 
     useEffect(() => {
-        setAppBadgeCount(unreadCount).catch(() => {});
+        setAppBadgeCount(unreadCount).catch(() => { });
     }, [unreadCount]);
-    
+
     useEffect(() => {
         if (!user?.uid) {
-        return;
+            return;
         }
         setCrashlyticsUserId(user.uid);
     }, [user?.uid]);
@@ -64,14 +64,14 @@ export const NotificationProvider = ({ children }) => {
             try {
                 const stored = await getStoredNotifications();
                 if (mounted) {
-                setNotifications(stored);
+                    setNotifications(stored);
                 }
             } catch (error) {
                 recordCrashlyticsError(error, 'Failed to load stored notifications');
                 console.warn('Failed to load stored notifications:', error?.message || String(error));
             } finally {
                 if (mounted) {
-                setLoading(false);
+                    setLoading(false);
                 }
             }
         };
@@ -96,90 +96,90 @@ export const NotificationProvider = ({ children }) => {
                 await setupNotificationChannel();
 
                 const granted =
-                await requestNotificationPermission();
+                    await requestNotificationPermission();
 
                 if (!mounted) {
-                return;
+                    return;
                 }
 
                 setPermissionGranted(granted);
 
                 if (!granted) {
-                return;
+                    return;
                 }
 
                 const token = await getFcmDeviceToken();
 
                 if (token && mounted) {
-                await saveTokenToProfile(
-                    user.uid,
-                    token
-                );
+                    await saveTokenToProfile(
+                        user.uid,
+                        token
+                    );
                 }
                 await subscribeToTopic('all-users');
 
                 //Handle FCM Token change
                 unsubscribeTokenRefresh =
-                subscribeToTokenRefresh(
-                    async (newToken) => {
-                    try {
-                        if (!newToken || !user?.uid) {
-                        return;
-                        }
+                    subscribeToTokenRefresh(
+                        async (newToken) => {
+                            try {
+                                if (!newToken || !user?.uid) {
+                                    return;
+                                }
 
-                        await saveTokenToProfile(
-                        user.uid,
-                        newToken
-                        );
-                    } catch (error) {
-                        recordCrashlyticsError(
-                        error,
-                        'Failed to save refreshed FCM token'
-                        );
-                    }
-                    }
-                );
+                                await saveTokenToProfile(
+                                    user.uid,
+                                    newToken
+                                );
+                            } catch (error) {
+                                recordCrashlyticsError(
+                                    error,
+                                    'Failed to save refreshed FCM token'
+                                );
+                            }
+                        }
+                    );
                 //Handle foreground notifications
                 unsubscribeForeground =
-                subscribeToForegroundMessages(
-                    async (remoteMessage) => {
-                    try {
-                        await displayForegroundNotification(
-                        remoteMessage
-                        );
+                    subscribeToForegroundMessages(
+                        async (remoteMessage) => {
+                            try {
+                                await displayForegroundNotification(
+                                    remoteMessage
+                                );
 
-                        const updated =
-                        await saveNotificationLocally(
-                            remoteMessage
-                        );
+                                const updated =
+                                    await saveNotificationLocally(
+                                        remoteMessage
+                                    );
 
-                        if (mounted) {
-                        setNotifications(updated);
+                                if (mounted) {
+                                    setNotifications(updated);
+                                }
+                            } catch (error) {
+                                recordCrashlyticsError(
+                                    error,
+                                    'Failed to handle foreground notification'
+                                );
+
+                                console.warn(
+                                    'Foreground notification error:',
+                                    error?.message || String(error)
+                                );
+                            }
                         }
-                    } catch (error) {
-                        recordCrashlyticsError(
-                        error,
-                        'Failed to handle foreground notification'
-                        );
-
-                        console.warn(
-                        'Foreground notification error:',
-                        error?.message || String(error)
-                        );
-                    }
-                    }
-                );
+                    );
                 unsubscribeNotifeePress =
-                subscribeToNotifeeEvents(() => {});
+                    subscribeToNotifeeEvents(() => { });
             } catch (error) {
                 recordCrashlyticsError(
-                error,
-                'Notification setup error'
+                    error,
+                    'Notification setup error'
                 );
 
                 console.warn(
-                'Notification setup error:',
-                error?.message || String(error)
+                    'Notification setup error:',
+                    error?.message || String(error)
                 );
             }
         };
@@ -208,13 +208,13 @@ export const NotificationProvider = ({ children }) => {
         async (id) => {
             try {
                 const updated =
-                await markNotificationRead(id);
+                    await markNotificationRead(id);
 
                 setNotifications(updated);
             } catch (error) {
-                recordCrashlyticsError(error,'Failed to mark notification as read');
-                }
-            },
+                recordCrashlyticsError(error, 'Failed to mark notification as read');
+            }
+        },
         []
     );
 
@@ -223,59 +223,59 @@ export const NotificationProvider = ({ children }) => {
         async () => {
             try {
                 const updated =
-                await markAllNotificationsRead();
+                    await markAllNotificationsRead();
 
                 setNotifications(updated);
             } catch (error) {
                 recordCrashlyticsError(
-                error,
-                'Failed to mark all notifications as read'
+                    error,
+                    'Failed to mark all notifications as read'
                 );
             }
-    }, []);
+        }, []);
 
     //Delete one notification
     const removeNotification = useCallback(
         async (id) => {
             try {
                 const updated =
-                await deleteNotification(id);
+                    await deleteNotification(id);
                 setNotifications(updated);
             } catch (error) {
                 recordCrashlyticsError(error, 'Failed to delete notification');
             }
-    }, []);
+        }, []);
 
     //Delete all notification
     const clearAll = useCallback(
         async () => {
             try {
                 const updated =
-                await clearAllNotifications();
+                    await clearAllNotifications();
 
                 setNotifications(updated);
             } catch (error) {
                 recordCrashlyticsError(
-                error,
-                'Failed to clear notifications'
+                    error,
+                    'Failed to clear notifications'
                 );
             }
-    }, []);
+        }, []);
 
     return (
         <NotificationContext.Provider
-        value={{
-            notifications,
-            loading,
-            unreadCount,
-            permissionGranted,
-            markAsRead,
-            markAllAsRead,
-            removeNotification,
-            clearAll,
-        }}
+            value={{
+                notifications,
+                loading,
+                unreadCount,
+                permissionGranted,
+                markAsRead,
+                markAllAsRead,
+                removeNotification,
+                clearAll,
+            }}
         >
-        {children}
+            {children}
         </NotificationContext.Provider>
     );
 };

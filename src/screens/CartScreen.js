@@ -46,7 +46,7 @@ const CartScreen = ({ navigation }) => {
         error,
     } = useCheckout(() => {
         navigation.navigate('Main', {
-        screen: 'History',
+            screen: 'History',
         });
     });
 
@@ -54,8 +54,8 @@ const CartScreen = ({ navigation }) => {
         console.log('Cart back pressed');
         // Do not let analytics prevent navigation.
         logButtonClick(
-        'back',
-        'CartScreen'
+            'back',
+            'CartScreen'
         );
         navigation.goBack();
     };
@@ -80,9 +80,9 @@ const CartScreen = ({ navigation }) => {
                 }
             );
             updateQuantity(item.plant.id, newQuantity);
-            } catch (error) {
-                console.error('Increase quantity failed:',error);
-                logErrorToCrashlytics(error,'Failed to increase cart item quantity'
+        } catch (error) {
+            console.error('Increase quantity failed:', error);
+            logErrorToCrashlytics(error, 'Failed to increase cart item quantity'
             );
         }
     };
@@ -91,213 +91,213 @@ const CartScreen = ({ navigation }) => {
         try {
             const newQuantity = Math.max(1, item.quantity - 1);
             console.log(
-            'Decreasing quantity:',
-            item.plant.id,
-            newQuantity
-        );
+                'Decreasing quantity:',
+                item.plant.id,
+                newQuantity
+            );
 
-        logButtonClick(
-            'cart_quantity_decrease',
-            'CartScreen',
-            {
-            product_id: String(
-                item.plant.id
-            ),
-            product_name: item.plant.name
-                ? String(item.plant.name)
-                : undefined,
-            old_quantity: item.quantity,
-            new_quantity: newQuantity,
-            }
-        );
+            logButtonClick(
+                'cart_quantity_decrease',
+                'CartScreen',
+                {
+                    product_id: String(
+                        item.plant.id
+                    ),
+                    product_name: item.plant.name
+                        ? String(item.plant.name)
+                        : undefined,
+                    old_quantity: item.quantity,
+                    new_quantity: newQuantity,
+                }
+            );
 
-        updateQuantity(
-            item.plant.id,
-            newQuantity
-        );
+            updateQuantity(
+                item.plant.id,
+                newQuantity
+            );
         } catch (error) {
-        console.error(
-            'Decrease quantity failed:',
-            error
-        );
+            console.error(
+                'Decrease quantity failed:',
+                error
+            );
 
-        logErrorToCrashlytics(
-            error,
-            'Failed to decrease cart item quantity'
+            logErrorToCrashlytics(
+                error,
+                'Failed to decrease cart item quantity'
             );
         }
     };
 
     const handleRemove = (item) => {
         try {
-        console.log(
-            'Removing product:',
-            item.plant.id
-        );
-
-        logButtonClick(
-            'remove_from_cart',
-            'CartScreen',
-            {
-            product_id: String(
+            console.log(
+                'Removing product:',
                 item.plant.id
-            ),
-            product_name: item.plant.name
-                ? String(item.plant.name)
-                : undefined,
-            quantity: item.quantity,
-            }
-        );
+            );
 
-        removeFromCart(
-            item.plant.id
-        );
+            logButtonClick(
+                'remove_from_cart',
+                'CartScreen',
+                {
+                    product_id: String(
+                        item.plant.id
+                    ),
+                    product_name: item.plant.name
+                        ? String(item.plant.name)
+                        : undefined,
+                    quantity: item.quantity,
+                }
+            );
+
+            removeFromCart(
+                item.plant.id
+            );
         } catch (error) {
-        console.error(
-            'Remove item failed:',
-            error
-        );
+            console.error(
+                'Remove item failed:',
+                error
+            );
 
-        logErrorToCrashlytics(
-            error,
-            'Failed to remove item from cart'
-        );
+            logErrorToCrashlytics(
+                error,
+                'Failed to remove item from cart'
+            );
         }
     };
 
     const handleCheckout = async () => {
         try {
-        console.log(
-            'Checkout pressed'
-        );
+            console.log(
+                'Checkout pressed'
+            );
 
-        logButtonClick(
-            'checkout',
-            'CartScreen',
-            {
-            item_count: items.length,
-            total_quantity: items.reduce(
-                (sum, item) =>
-                sum + item.quantity,
-                0
-            ),
-            total_price: Number(
-                totalPrice.toFixed(2)
-            ),
-            }
-        );
+            logButtonClick(
+                'checkout',
+                'CartScreen',
+                {
+                    item_count: items.length,
+                    total_quantity: items.reduce(
+                        (sum, item) =>
+                            sum + item.quantity,
+                        0
+                    ),
+                    total_price: Number(
+                        totalPrice.toFixed(2)
+                    ),
+                }
+            );
 
-        await checkout();
+            await checkout();
         } catch (error) {
-        console.error(
-            'Checkout failed:',
-            error
-        );
+            console.error(
+                'Checkout failed:',
+                error
+            );
 
-        logErrorToCrashlytics(
-            error,
-            'Checkout failed from CartScreen'
-        );
+            logErrorToCrashlytics(
+                error,
+                'Checkout failed from CartScreen'
+            );
         }
     };
 
     useEffect(() => {
         if (error) {
-        logErrorToCrashlytics(
-            error,
-            'CartScreen checkout error'
-        );
+            logErrorToCrashlytics(
+                error,
+                'CartScreen checkout error'
+            );
         }
     }, [error]);
 
     return (
         <SafeAreaView
-        style={styles.safeArea}
+            style={styles.safeArea}
         >
-        <ScreenHeader
-            title="My Cart"
-            showBack
-            onBackPress={handleBack}
-        />
-
-        {items.length === 0 ? (
-            <View
-            style={styles.emptyState}
-            >
-            <Text
-                style={styles.emptyEmoji}
-            >
-                🪴
-            </Text>
-
-            <Text
-                style={styles.emptyText}
-            >
-                Your cart is empty
-            </Text>
-            </View>
-        ) : (
-            <>
-            <FlatList
-                data={items}
-                keyExtractor={(item) =>
-                String(item.plant.id)
-                }
-                contentContainerStyle={
-                styles.listContent
-                }
-                renderItem={({ item }) => (
-                <CartItemRow
-                    item={item}
-                    onIncrease={() =>
-                    handleIncrease(item)
-                    }
-                    onDecrease={() =>
-                    handleDecrease(item)
-                    }
-                    onRemove={() =>
-                    handleRemove(item)
-                    }
-                />
-                )}
+            <ScreenHeader
+                title="My Cart"
+                showBack
+                onBackPress={handleBack}
             />
 
-            <View
-                style={styles.footer}
-            >
-                {error && (
-                <Text
-                    style={styles.errorText}
-                >
-                    {error}
-                </Text>
-                )}
-
+            {items.length === 0 ? (
                 <View
-                style={styles.totalRow}
+                    style={styles.emptyState}
                 >
-                <Text
-                    style={styles.totalLabel}
-                >
-                    Total
-                </Text>
+                    <Text
+                        style={styles.emptyEmoji}
+                    >
+                        🪴
+                    </Text>
 
-                <Text
-                    style={styles.totalValue}
-                >
-                    $
-                    {totalPrice.toFixed(2)}
-                </Text>
+                    <Text
+                        style={styles.emptyText}
+                    >
+                        Your cart is empty
+                    </Text>
                 </View>
+            ) : (
+                <>
+                    <FlatList
+                        data={items}
+                        keyExtractor={(item) =>
+                            String(item.plant.id)
+                        }
+                        contentContainerStyle={
+                            styles.listContent
+                        }
+                        renderItem={({ item }) => (
+                            <CartItemRow
+                                item={item}
+                                onIncrease={() =>
+                                    handleIncrease(item)
+                                }
+                                onDecrease={() =>
+                                    handleDecrease(item)
+                                }
+                                onRemove={() =>
+                                    handleRemove(item)
+                                }
+                            />
+                        )}
+                    />
 
-                <CustomButton
-                title="Checkout"
-                onPress={handleCheckout}
-                loading={loading}
-                />
-            </View>
-            </>
-        )}
+                    <View
+                        style={styles.footer}
+                    >
+                        {error && (
+                            <Text
+                                style={styles.errorText}
+                            >
+                                {error}
+                            </Text>
+                        )}
+
+                        <View
+                            style={styles.totalRow}
+                        >
+                            <Text
+                                style={styles.totalLabel}
+                            >
+                                Total
+                            </Text>
+
+                            <Text
+                                style={styles.totalValue}
+                            >
+                                $
+                                {totalPrice.toFixed(2)}
+                            </Text>
+                        </View>
+
+                        <CustomButton
+                            title="Checkout"
+                            onPress={handleCheckout}
+                            loading={loading}
+                        />
+                    </View>
+                </>
+            )}
         </SafeAreaView>
     );
 };
@@ -306,26 +306,26 @@ const styles = StyleSheet.create({
     safeArea: {
         flex: 1,
         backgroundColor:
-        COLORS.background,
+            COLORS.background,
     },
 
     listContent: {
         paddingHorizontal:
-        SPACING.lg,
+            SPACING.lg,
         paddingBottom:
-        SPACING.md,
+            SPACING.md,
     },
 
     footer: {
         paddingHorizontal:
-        SPACING.lg,
+            SPACING.lg,
         paddingTop:
-        SPACING.md,
+            SPACING.md,
         paddingBottom:
-        SPACING.lg,
+            SPACING.lg,
         borderTopWidth: 1,
         borderTopColor:
-        COLORS.inputBorder,
+            COLORS.inputBorder,
     },
 
     errorText: {
@@ -333,27 +333,27 @@ const styles = StyleSheet.create({
         fontSize: FONT_SIZES.sm,
         fontWeight: '600',
         marginBottom:
-        SPACING.sm,
+            SPACING.sm,
     },
 
     totalRow: {
         flexDirection: 'row',
         justifyContent:
-        'space-between',
+            'space-between',
         marginBottom:
-        SPACING.md,
+            SPACING.md,
     },
 
     totalLabel: {
         fontSize:
-        FONT_SIZES.lg,
+            FONT_SIZES.lg,
         fontWeight: '600',
         color: COLORS.text,
     },
 
     totalValue: {
         fontSize:
-        FONT_SIZES.lg,
+            FONT_SIZES.lg,
         fontWeight: '700',
         color: COLORS.primary,
     },
@@ -367,14 +367,14 @@ const styles = StyleSheet.create({
     emptyEmoji: {
         fontSize: 56,
         marginBottom:
-        SPACING.sm,
+            SPACING.sm,
     },
 
     emptyText: {
         fontSize:
-        FONT_SIZES.md,
+            FONT_SIZES.md,
         color:
-        COLORS.textMuted,
+            COLORS.textMuted,
     },
 });
 

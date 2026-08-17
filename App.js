@@ -9,22 +9,22 @@ import { configureGoogleSignIn } from './src/config/googleSignIn';
 import { initializeCrashlytics } from './src/services/analyticsService';
 
 export default function App() {
-  useEffect(() => {
-    initializeCrashlytics();
-    configureGoogleSignIn();
-  }, []);
+    useEffect(() => {
+        initializeCrashlytics();
+        configureGoogleSignIn();
+    }, []);
 
-  return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <AuthProvider>
-        <CartProvider>
-          <FavoritesProvider>
-            <NotificationProvider>
-              <AppNavigator />
-            </NotificationProvider>
-          </FavoritesProvider>
-        </CartProvider>
-      </AuthProvider>
-    </GestureHandlerRootView>
-  );
+    return (
+        <GestureHandlerRootView style={{ flex: 1 }}>
+            <AuthProvider>
+                <CartProvider>
+                    <FavoritesProvider>
+                        <NotificationProvider>
+                            <AppNavigator />
+                        </NotificationProvider>
+                    </FavoritesProvider>
+                </CartProvider>
+            </AuthProvider>
+        </GestureHandlerRootView>
+    );
 }

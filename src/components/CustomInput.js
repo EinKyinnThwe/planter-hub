@@ -12,17 +12,17 @@ const CustomInput = ({
 }) => {
     return (
         <View style={styles.wrapper}>
-        <TextInput
-            style={[styles.input, error && styles.inputError]}
-            placeholder={placeholder}
-            placeholderTextColor={COLORS.placeholder}
-            value={value}
-            onChangeText={onChangeText}
-            secureTextEntry={secureTextEntry}
-            keyboardType={keyboardType}
-            autoCapitalize="none"
-        />
-        {!!error && <Text style={styles.errorText}>{error}</Text>}
+            <TextInput
+                style={[styles.input, error && styles.inputError]}
+                placeholder={placeholder}
+                placeholderTextColor={COLORS.placeholder}
+                value={value}
+                onChangeText={onChangeText}
+                secureTextEntry={secureTextEntry}
+                keyboardType={keyboardType}
+                autoCapitalize="none"
+            />
+            {!!error && <Text style={styles.errorText}>{error}</Text>}
         </View>
     );
 };

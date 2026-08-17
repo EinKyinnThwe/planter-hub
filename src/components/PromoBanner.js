@@ -11,20 +11,20 @@ const PromoBanner = ({
 }) => {
     return (
         <View style={styles.card}>
-        <View style={styles.textBlock}>
-            <Text style={styles.headline}>{headline}</Text>
-            <Text style={styles.percent}>{percent}</Text>
-            <Text style={styles.subtext}>{subtext}</Text>
-            {!!dateRange && <Text style={styles.dateRange}>{dateRange}</Text>}
-            <Text style={styles.terms}>Term of Condition</Text>
-        </View>
+            <View style={styles.textBlock}>
+                <Text style={styles.headline}>{headline}</Text>
+                <Text style={styles.percent}>{percent}</Text>
+                <Text style={styles.subtext}>{subtext}</Text>
+                {!!dateRange && <Text style={styles.dateRange}>{dateRange}</Text>}
+                <Text style={styles.terms}>Term of Condition</Text>
+            </View>
 
-        <View style={styles.rightSide}>
-            <Text style={styles.plantEmoji}>🪴</Text>
-            <TouchableOpacity style={styles.shopButton} onPress={onShopPress}>
-            <Text style={styles.shopButtonText}>Shop now</Text>
-            </TouchableOpacity>
-        </View>
+            <View style={styles.rightSide}>
+                <Text style={styles.plantEmoji}>🪴</Text>
+                <TouchableOpacity style={styles.shopButton} onPress={onShopPress}>
+                    <Text style={styles.shopButtonText}>Shop now</Text>
+                </TouchableOpacity>
+            </View>
         </View>
     );
 };

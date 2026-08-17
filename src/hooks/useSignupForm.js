@@ -39,10 +39,10 @@ export default function useSignupForm(onSuccess) {
 
 		try {
 			const { isNewUser } = await ensureUserProfile(user);
-		if (isNewUser) {
-			await seedProductsIfEmpty();
-		}
-		onSuccess && onSuccess(user);
+			if (isNewUser) {
+				await seedProductsIfEmpty();
+			}
+			onSuccess && onSuccess(user);
 		} catch (err) {
 			setErrors({ form: 'Account created, but setup failed. Please try logging in.' });
 		} finally {

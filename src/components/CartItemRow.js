@@ -8,28 +8,28 @@ const CartItemRow = ({ item, onIncrease, onDecrease, onRemove }) => {
 
     return (
         <View style={styles.row}>
-        <View style={styles.imageBox}>
-            <Text style={styles.emoji}>{plant.emoji}</Text>
-        </View>
-
-        <View style={styles.info}>
-            <Text style={styles.name} numberOfLines={1}>
-            {plant.name}
-            </Text>
-            <Text style={styles.price}>${plant.price.toFixed(2)}</Text>
-
-            <View style={styles.bottomRow}>
-            <QuantityStepper
-                quantity={quantity}
-                onIncrease={onIncrease}
-                onDecrease={onDecrease}
-                size="sm"
-            />
-            <TouchableOpacity onPress={onRemove} hitSlop={8}>
-                <Text style={styles.removeText}>Remove</Text>
-            </TouchableOpacity>
+            <View style={styles.imageBox}>
+                <Text style={styles.emoji}>{plant.emoji}</Text>
             </View>
-        </View>
+
+            <View style={styles.info}>
+                <Text style={styles.name} numberOfLines={1}>
+                    {plant.name}
+                </Text>
+                <Text style={styles.price}>${plant.price.toFixed(2)}</Text>
+
+                <View style={styles.bottomRow}>
+                    <QuantityStepper
+                        quantity={quantity}
+                        onIncrease={onIncrease}
+                        onDecrease={onDecrease}
+                        size="sm"
+                    />
+                    <TouchableOpacity onPress={onRemove} hitSlop={8}>
+                        <Text style={styles.removeText}>Remove</Text>
+                    </TouchableOpacity>
+                </View>
+            </View>
         </View>
     );
 };

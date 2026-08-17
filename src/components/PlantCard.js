@@ -7,44 +7,44 @@ const PlantCard = ({ plant, isFavorite, onPress, onToggleFavorite, style }) => {
 
     return (
         <TouchableOpacity
-        style={[styles.card, style]}
-        onPress={onPress}
-        activeOpacity={0.85}
+            style={[styles.card, style]}
+            onPress={onPress}
+            activeOpacity={0.85}
         >
-        <View style={styles.imageBox}>
-            <View style={styles.categoryTag}>
-            <Text style={styles.categoryTagText}>{plant.category}</Text>
+            <View style={styles.imageBox}>
+                <View style={styles.categoryTag}>
+                    <Text style={styles.categoryTagText}>{plant.category}</Text>
+                </View>
+                <Text style={styles.emoji}>{plant.emoji}</Text>
             </View>
-            <Text style={styles.emoji}>{plant.emoji}</Text>
-        </View>
 
-        <View style={styles.infoRow}>
-            <Text style={styles.name} numberOfLines={1}>
-            {plant.name}
-            </Text>
-            <TouchableOpacity onPress={onToggleFavorite} hitSlop={6}>
-            <Text style={styles.heart}>{isFavorite ? '♥' : '♡'}</Text>
-            </TouchableOpacity>
-        </View>
-
-        <View style={styles.ratingRow}>
-            <Text style={styles.star}>★</Text>
-            <Text style={styles.ratingText}>
-            {plant.rating.toFixed(1)} ({plant.reviewCount}) · {plant.sold} sold
-            </Text>
-        </View>
-
-        <View style={styles.priceRow}>
-            {hasDiscount && (
-            <View style={styles.discountBadge}>
-                <Text style={styles.discountText}>{plant.discountPercent}%</Text>
+            <View style={styles.infoRow}>
+                <Text style={styles.name} numberOfLines={1}>
+                    {plant.name}
+                </Text>
+                <TouchableOpacity onPress={onToggleFavorite} hitSlop={6}>
+                    <Text style={styles.heart}>{isFavorite ? '♥' : '♡'}</Text>
+                </TouchableOpacity>
             </View>
-            )}
-            <Text style={styles.price}>${plant.price.toFixed(2)}</Text>
-            {hasDiscount && (
-            <Text style={styles.originalPrice}>${plant.originalPrice.toFixed(2)}</Text>
-            )}
-        </View>
+
+            <View style={styles.ratingRow}>
+                <Text style={styles.star}>★</Text>
+                <Text style={styles.ratingText}>
+                    {plant.rating.toFixed(1)} ({plant.reviewCount}) · {plant.sold} sold
+                </Text>
+            </View>
+
+            <View style={styles.priceRow}>
+                {hasDiscount && (
+                    <View style={styles.discountBadge}>
+                        <Text style={styles.discountText}>{plant.discountPercent}%</Text>
+                    </View>
+                )}
+                <Text style={styles.price}>${plant.price.toFixed(2)}</Text>
+                {hasDiscount && (
+                    <Text style={styles.originalPrice}>${plant.originalPrice.toFixed(2)}</Text>
+                )}
+            </View>
         </TouchableOpacity>
     );
 };

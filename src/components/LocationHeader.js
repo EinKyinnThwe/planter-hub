@@ -5,28 +5,28 @@ import { COLORS, SPACING, FONT_SIZES } from '../constants/theme';
 const LocationHeader = ({ city, cartCount, onCartPress, onBellPress }) => {
     return (
         <View style={styles.container}>
-        <View>
-            <Text style={styles.label}>Location</Text>
-            <TouchableOpacity style={styles.cityRow} hitSlop={6}>
-            <Text style={styles.pin}>📍</Text>
-            <Text style={styles.city}>{city}</Text>
-            <Text style={styles.chevron}>⌄</Text>
-            </TouchableOpacity>
-        </View>
+            <View>
+                <Text style={styles.label}>Location</Text>
+                <TouchableOpacity style={styles.cityRow} hitSlop={6}>
+                    <Text style={styles.pin}>📍</Text>
+                    <Text style={styles.city}>{city}</Text>
+                    <Text style={styles.chevron}>⌄</Text>
+                </TouchableOpacity>
+            </View>
 
-        <View style={styles.icons}>
-            <TouchableOpacity style={styles.iconButton} onPress={onCartPress} hitSlop={6}>
-            <Text style={styles.icon}>🛒</Text>
-            {cartCount > 0 && (
-                <View style={styles.badge}>
-                <Text style={styles.badgeText}>{cartCount}</Text>
-                </View>
-            )}
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.iconButton} onPress={onBellPress} hitSlop={6}>
-            <Text style={styles.icon}>🔔</Text>
-            </TouchableOpacity>
-        </View>
+            <View style={styles.icons}>
+                <TouchableOpacity style={styles.iconButton} onPress={onCartPress} hitSlop={6}>
+                    <Text style={styles.icon}>🛒</Text>
+                    {cartCount > 0 && (
+                        <View style={styles.badge}>
+                            <Text style={styles.badgeText}>{cartCount}</Text>
+                        </View>
+                    )}
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.iconButton} onPress={onBellPress} hitSlop={6}>
+                    <Text style={styles.icon}>🔔</Text>
+                </TouchableOpacity>
+            </View>
         </View>
     );
 };

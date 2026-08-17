@@ -17,15 +17,15 @@ export default function useOrders() {
 
         setLoading(true);
         const unsubscribe = subscribeToOrders(
-        user.uid,
-        (data) => {
-            setOrders(data);
-            setLoading(false);
-        },
-        (err) => {
-            setError(err.message || 'Failed to load order history.');
-            setLoading(false);
-        }
+            user.uid,
+            (data) => {
+                setOrders(data);
+                setLoading(false);
+            },
+            (err) => {
+                setError(err.message || 'Failed to load order history.');
+                setLoading(false);
+            }
         );
 
         return unsubscribe;

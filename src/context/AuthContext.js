@@ -23,8 +23,8 @@ const AuthContext = createContext({
     user: null,
     profile: null,
     loading: true,
-    refreshProfile: async () => {},
-    logout: async () => {},
+    refreshProfile: async () => { },
+    logout: async () => { },
 });
 
 export function AuthProvider({ children }) {
@@ -39,33 +39,33 @@ export function AuthProvider({ children }) {
         }
 
         try {
-        const data = await fetchUserProfile(firebaseUser.uid);
+            const data = await fetchUserProfile(firebaseUser.uid);
 
-        setProfile({
-            uid: firebaseUser.uid,
-            email: firebaseUser.email,
-            displayName:
-            data?.displayName ||
-            firebaseUser.displayName ||
-            firebaseUser.email?.split('@')[0] ||
-            'User',
-            photoURL:
-            data?.photoURL ||
-            firebaseUser.photoURL ||
-            null,
-            createdAt: data?.createdAt || null,
-            ...data,
-        });
+            setProfile({
+                uid: firebaseUser.uid,
+                email: firebaseUser.email,
+                displayName:
+                    data?.displayName ||
+                    firebaseUser.displayName ||
+                    firebaseUser.email?.split('@')[0] ||
+                    'User',
+                photoURL:
+                    data?.photoURL ||
+                    firebaseUser.photoURL ||
+                    null,
+                createdAt: data?.createdAt || null,
+                ...data,
+            });
         } catch (error) {
             setProfile({
                 uid: firebaseUser.uid,
                 email: firebaseUser.email,
                 displayName:
-                firebaseUser.displayName ||
-                firebaseUser.email?.split('@')[0] ||
-                'User',
+                    firebaseUser.displayName ||
+                    firebaseUser.email?.split('@')[0] ||
+                    'User',
                 photoURL:
-                firebaseUser.photoURL || null,
+                    firebaseUser.photoURL || null,
                 createdAt: null,
             });
         }
@@ -75,12 +75,12 @@ export function AuthProvider({ children }) {
         let mounted = true;
 
         const initializeServices = async () => {
-        try {
-            await initializeAnalyticsServices();
-        } catch (error) {
+            try {
+                await initializeAnalyticsServices();
+            } catch (error) {
                 console.warn(
-                'Firebase services initialization failed:',
-                error?.message || String(error)
+                    'Firebase services initialization failed:',
+                    error?.message || String(error)
                 );
             }
         };
@@ -148,13 +148,13 @@ export function AuthProvider({ children }) {
     const logout = async () => {
         try {
             const { error } = await signOutUser();
-        if (error) {
-            return { error };
-        }
-        setUser(null);
-        setProfile(null);
+            if (error) {
+                return { error };
+            }
+            setUser(null);
+            setProfile(null);
 
-        return { error: null };
+            return { error: null };
         } catch (error) {
             return {
                 error: error?.message || 'Failed to sign out!',
@@ -179,7 +179,7 @@ export function AuthProvider({ children }) {
 
     return (
         <AuthContext.Provider value={value}>
-        {children}
+            {children}
         </AuthContext.Provider>
     );
 }

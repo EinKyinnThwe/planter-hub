@@ -5,16 +5,16 @@ import { COLORS, SPACING, FONT_SIZES, RADIUS } from '../constants/theme';
 const CategoryChip = ({ label, active, onPress }) => {
     return (
         <TouchableOpacity
-        style={[styles.chip, active && styles.chipActive]}
-        onPress={onPress}
-        activeOpacity={0.8}
+            style={[styles.chip, active && styles.chipActive]}
+            onPress={onPress}
+            activeOpacity={0.8}
         >
-        <Text
-            style={[styles.label, active && styles.labelActive]}
-            numberOfLines={1}
-        >
-            {label}
-        </Text>
+            <Text
+                style={[styles.label, active && styles.labelActive]}
+                numberOfLines={1}
+            >
+                {label}
+            </Text>
         </TouchableOpacity>
     );
 };

@@ -5,12 +5,12 @@ import { COLORS, SPACING, FONT_SIZES } from '../constants/theme';
 const SectionHeader = ({ title, onSeeAllPress }) => {
     return (
         <View style={styles.container}>
-        <Text style={styles.title}>{title}</Text>
-        {onSeeAllPress && (
-            <TouchableOpacity onPress={onSeeAllPress} hitSlop={6}>
-            <Text style={styles.seeAll}>See all</Text>
-            </TouchableOpacity>
-        )}
+            <Text style={styles.title}>{title}</Text>
+            {onSeeAllPress && (
+                <TouchableOpacity onPress={onSeeAllPress} hitSlop={6}>
+                    <Text style={styles.seeAll}>See all</Text>
+                </TouchableOpacity>
+            )}
         </View>
     );
 };

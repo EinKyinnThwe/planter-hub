@@ -7,23 +7,23 @@ const QuantityStepper = ({ quantity, onIncrease, onDecrease, size = 'md' }) => {
 
     return (
         <View style={styles.container}>
-        <TouchableOpacity
-            style={[styles.button, isSmall && styles.buttonSmall]}
-            onPress={onDecrease}
-            hitSlop={6}
-        >
-            <Text style={styles.buttonText}>−</Text>
-        </TouchableOpacity>
+            <TouchableOpacity
+                style={[styles.button, isSmall && styles.buttonSmall]}
+                onPress={onDecrease}
+                hitSlop={6}
+            >
+                <Text style={styles.buttonText}>−</Text>
+            </TouchableOpacity>
 
-        <Text style={[styles.quantity, isSmall && styles.quantitySmall]}>{quantity}</Text>
+            <Text style={[styles.quantity, isSmall && styles.quantitySmall]}>{quantity}</Text>
 
-        <TouchableOpacity
-            style={[styles.button, isSmall && styles.buttonSmall]}
-            onPress={onIncrease}
-            hitSlop={6}
-        >
-            <Text style={styles.buttonText}>+</Text>
-        </TouchableOpacity>
+            <TouchableOpacity
+                style={[styles.button, isSmall && styles.buttonSmall]}
+                onPress={onIncrease}
+                hitSlop={6}
+            >
+                <Text style={styles.buttonText}>+</Text>
+            </TouchableOpacity>
         </View>
     );
 };

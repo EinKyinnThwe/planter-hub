@@ -1,72 +1,74 @@
 {
-  "expo": {
-    "name": "planter-hub",
-    "slug": "planter-hub",
-    "version": "1.0.0",
-    "orientation": "portrait",
-    "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
-    "newArchEnabled": true,
-    "splash": {
-      "image": "./assets/splash-icon.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
-    },
-    "ios": {
-      "supportsTablet": true,
-      "bundleIdentifier": "com.anonymous.planterhub",
-      "googleServicesFile": "./GoogleService-Info.plist",
-      "infoPlist": {
-        "GIDClientID": "292160762036-mbapp5u58okr2lp0559ngp2ic8dkuqv8.apps.googleusercontent.com",
-        "UIBackgroundModes": ["remote-notification"],
-        "CFBundleURLTypes": [
-          {
-            "CFBundleURLSchemes": [
-              "com.googleusercontent.apps.292160762036-mbapp5u58okr2lp0559ngp2ic8dkuqv8"
+    "expo": {
+        "name": "planter-hub",
+        "slug": "planter-hub",
+        "version": "1.0.0",
+        "orientation": "portrait",
+        "icon": "./assets/icon.png",
+        "userInterfaceStyle": "light",
+        "newArchEnabled": true,
+        "splash": {
+            "image": "./assets/splash-icon.png",
+            "resizeMode": "contain",
+            "backgroundColor": "#ffffff"
+        },
+        "ios": {
+            "supportsTablet": true,
+            "bundleIdentifier": "com.anonymous.planterhub",
+            "googleServicesFile": "./GoogleService-Info.plist",
+            "infoPlist": {
+                "GIDClientID": "292160762036-mbapp5u58okr2lp0559ngp2ic8dkuqv8.apps.googleusercontent.com",
+                "UIBackgroundModes": [
+                    "remote-notification"
+                ],
+                "CFBundleURLTypes": [
+                    {
+                        "CFBundleURLSchemes": [
+                            "com.googleusercontent.apps.292160762036-mbapp5u58okr2lp0559ngp2ic8dkuqv8"
+                        ]
+                    }
+                ]
+            }
+        },
+        "android": {
+            "adaptiveIcon": {
+                "foregroundImage": "./assets/adaptive-icon.png",
+                "backgroundColor": "#ffffff"
+            },
+            "edgeToEdgeEnabled": true,
+            "package": "com.anonymous.planterhub",
+            "googleServicesFile": "./google-services.json",
+            "permissions": [
+                "android.permission.POST_NOTIFICATIONS",
+                "android.permission.VIBRATE",
+                "android.permission.RECEIVE_BOOT_COMPLETED"
             ]
-          }
+        },
+        "web": {
+            "favicon": "./assets/favicon.png"
+        },
+        "plugins": [
+            "@react-native-firebase/app",
+            "@react-native-firebase/auth",
+            "@react-native-firebase/messaging",
+            "@react-native-firebase/analytics",
+            "@react-native-firebase/crashlytics",
+            "@react-native-firebase/perf",
+            [
+                "@react-native-google-signin/google-signin",
+                {
+                    "iosUrlScheme": "com.googleusercontent.apps.292160762036-mbapp5u58okr2lp0559ngp2ic8dkuqv8"
+                }
+            ],
+            [
+                "expo-build-properties",
+                {
+                    "ios": {
+                        "useFrameworks": "dynamic",
+                        "deploymentTarget": "15.1"
+                    }
+                }
+            ]
         ]
-      }
-    },
-    "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
-      },
-      "edgeToEdgeEnabled": true,
-      "package": "com.anonymous.planterhub",
-      "googleServicesFile": "./google-services.json",
-      "permissions": [
-        "android.permission.POST_NOTIFICATIONS",
-        "android.permission.VIBRATE",
-        "android.permission.RECEIVE_BOOT_COMPLETED"
-      ]
-    },
-    "web": {
-      "favicon": "./assets/favicon.png"
-    },
-    "plugins": [
-      "@react-native-firebase/app",
-      "@react-native-firebase/auth",
-      "@react-native-firebase/messaging",
-      "@react-native-firebase/analytics",
-      "@react-native-firebase/crashlytics",
-      "@react-native-firebase/perf",
-      [
-        "@react-native-google-signin/google-signin",
-        {
-          "iosUrlScheme": "com.googleusercontent.apps.292160762036-mbapp5u58okr2lp0559ngp2ic8dkuqv8"
-        }
-      ],
-      [
-        "expo-build-properties",
-        {
-          "ios": {
-            "useFrameworks": "dynamic",
-            "deploymentTarget": "15.1"
-          }
-        }
-      ]
-    ]
-  }
+    }
 }

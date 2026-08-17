@@ -5,14 +5,14 @@ import { COLORS, SPACING, FONT_SIZES, RADIUS } from '../constants/theme';
 const SearchBar = ({ value, onChangeText, onFilterPress }) => {
     return (
         <View style={styles.container}>
-        <Text style={styles.searchIcon}>🔍</Text>
-        <TextInput
-            style={styles.input}
-            placeholder="What are you looking for..."
-            placeholderTextColor={COLORS.placeholder}
-            value={value}
-            onChangeText={onChangeText}
-        />
+            <Text style={styles.searchIcon}>🔍</Text>
+            <TextInput
+                style={styles.input}
+                placeholder="What are you looking for..."
+                placeholderTextColor={COLORS.placeholder}
+                value={value}
+                onChangeText={onChangeText}
+            />
         </View>
     );
 };

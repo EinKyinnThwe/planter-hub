@@ -21,22 +21,22 @@ export default function useChatMessages() {
 
     useEffect(() => {
         if (!user) {
-        setMessages([]);
-        setLoading(false);
-        return;
+            setMessages([]);
+            setLoading(false);
+            return;
         }
 
         setLoading(true);
         const unsubscribe = subscribeToMessages(
-        user.uid,
-        (data) => {
-            setMessages(data);
-            setLoading(false);
-        },
-        (err) => {
-            setError(err.message || 'Failed to load messages.');
-            setLoading(false);
-        }
+            user.uid,
+            (data) => {
+                setMessages(data);
+                setLoading(false);
+            },
+            (err) => {
+                setError(err.message || 'Failed to load messages.');
+                setLoading(false);
+            }
         );
 
         return unsubscribe;
@@ -44,44 +44,44 @@ export default function useChatMessages() {
 
     const sendMessage = useCallback(
         async (text) => {
-        const trimmed = text.trim();
-        if (!trimmed || !user) return;
+            const trimmed = text.trim();
+            if (!trimmed || !user) return;
 
             setSending(true);
             try {
-            await measureAsync('send_chat_message', 
-                () => sendMessageToFirestore(user.uid, trimmed), 
-                {messageLength: trimmed.length}
-            );
-            if (AUTO_REPLY_ENABLED) {
-            setSupportTyping(true);
-            setTimeout(async () => {
-                try {
-                await sendAutoReply(user.uid, getAutoReplyText(trimmed));
-                } catch {
-                // Silently drop — a missed auto-reply isn't worth surfacing an error for.
-                } finally {
-                setSupportTyping(false);
+                await measureAsync('send_chat_message',
+                    () => sendMessageToFirestore(user.uid, trimmed),
+                    { messageLength: trimmed.length }
+                );
+                if (AUTO_REPLY_ENABLED) {
+                    setSupportTyping(true);
+                    setTimeout(async () => {
+                        try {
+                            await sendAutoReply(user.uid, getAutoReplyText(trimmed));
+                        } catch {
+                            // Silently drop — a missed auto-reply isn't worth surfacing an error for.
+                        } finally {
+                            setSupportTyping(false);
+                        }
+                    }, AUTO_REPLY_DELAY_MS);
                 }
-            }, AUTO_REPLY_DELAY_MS);
+            } catch (err) {
+                setError(err.message || 'Failed to send message.');
+            } finally {
+                setSending(false);
             }
-        } catch (err) {
-            setError(err.message || 'Failed to send message.');
-        } finally {
-            setSending(false);
-        }
         },
         [user]
     );
 
     const editMessage = useCallback(
         async (messageId, newText) => {
-        const trimmed = newText.trim();
-        if (!trimmed || !user) return;
-        try {
-            await editMessageInFirestore(user.uid, messageId, trimmed);
-        } catch (err) {
-            setError(err.message || 'Failed to edit message.');
+            const trimmed = newText.trim();
+            if (!trimmed || !user) return;
+            try {
+                await editMessageInFirestore(user.uid, messageId, trimmed);
+            } catch (err) {
+                setError(err.message || 'Failed to edit message.');
             }
         },
         [user]
@@ -89,11 +89,11 @@ export default function useChatMessages() {
 
     const deleteMessage = useCallback(
         async (messageId) => {
-        if (!user) return;
-        try {
-            await deleteMessageInFirestore(user.uid, messageId);
-        } catch (err) {
-            setError(err.message || 'Failed to delete message.');
+            if (!user) return;
+            try {
+                await deleteMessageInFirestore(user.uid, messageId);
+            } catch (err) {
+                setError(err.message || 'Failed to delete message.');
             }
         },
         [user]

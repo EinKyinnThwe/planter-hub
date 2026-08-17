@@ -12,7 +12,7 @@ export const PLANTS = [
         sold: 450,
         imageCount: 4,
         description:
-        'A bold, easy-care tropical plant known for its iconic split leaves. Thrives in bright, indirect light.',
+            'A bold, easy-care tropical plant known for its iconic split leaves. Thrives in bright, indirect light.',
     },
     {
         id: '2',
@@ -27,7 +27,7 @@ export const PLANTS = [
         sold: 280,
         imageCount: 5,
         description:
-        'Ficus Lyrata, commonly known as the fiddle-leaf fig, is prized for its large, violin-shaped leaves. Loves bright indirect light and a consistent watering routine.',
+            'Ficus Lyrata, commonly known as the fiddle-leaf fig, is prized for its large, violin-shaped leaves. Loves bright indirect light and a consistent watering routine.',
     },
     {
         id: '3',
@@ -42,7 +42,7 @@ export const PLANTS = [
         sold: 190,
         imageCount: 3,
         description:
-        'Striking silver-striped leaves that fold up at night. Prefers medium light and consistently moist, well-draining soil.',
+            'Striking silver-striped leaves that fold up at night. Prefers medium light and consistently moist, well-draining soil.',
     },
     {
         id: '4',
@@ -57,7 +57,7 @@ export const PLANTS = [
         sold: 610,
         imageCount: 3,
         description:
-        'Nearly indestructible and air-purifying. Tolerates low light and infrequent watering — perfect for beginners.',
+            'Nearly indestructible and air-purifying. Tolerates low light and infrequent watering — perfect for beginners.',
     },
     {
         id: '5',
@@ -72,7 +72,7 @@ export const PLANTS = [
         sold: 95,
         imageCount: 4,
         description:
-        'A hardy outdoor palm that brings a tropical feel to patios and gardens. Enjoys full sun and regular watering.',
+            'A hardy outdoor palm that brings a tropical feel to patios and gardens. Enjoys full sun and regular watering.',
     },
     {
         id: '6',
@@ -87,7 +87,7 @@ export const PLANTS = [
         sold: 320,
         imageCount: 3,
         description:
-        'A set of three low-maintenance succulents, ideal for sunny windowsills and small spaces.',
+            'A set of three low-maintenance succulents, ideal for sunny windowsills and small spaces.',
     },
     {
         id: '7',
@@ -102,7 +102,7 @@ export const PLANTS = [
         sold: 260,
         imageCount: 3,
         description:
-        'Elegant white blooms and glossy leaves. Thrives in low to medium light and likes evenly moist soil.',
+            'Elegant white blooms and glossy leaves. Thrives in low to medium light and likes evenly moist soil.',
     },
     {
         id: '8',
@@ -117,6 +117,6 @@ export const PLANTS = [
         sold: 130,
         imageCount: 4,
         description:
-        'A classic flowering rose bush for garden beds and borders. Needs full sun and regular pruning.',
+            'A classic flowering rose bush for garden beds and borders. Needs full sun and regular pruning.',
     },
 ];

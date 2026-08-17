@@ -5,19 +5,19 @@ import { COLORS, SPACING, FONT_SIZES, RADIUS } from '../constants/theme';
 const GoogleButton = ({ onPress, loading = false, disabled = false }) => {
     return (
         <TouchableOpacity
-        style={[styles.button, (disabled || loading) && styles.buttonDisabled]}
-        onPress={onPress}
-        activeOpacity={0.8}
-        disabled={disabled || loading}
+            style={[styles.button, (disabled || loading) && styles.buttonDisabled]}
+            onPress={onPress}
+            activeOpacity={0.8}
+            disabled={disabled || loading}
         >
-        {loading ? (
-            <ActivityIndicator color={COLORS.text} />
-        ) : (
-            <>
-            <Text style={styles.gIcon}>G</Text>
-            <Text style={styles.buttonText}>Continue with Google</Text>
-            </>
-        )}
+            {loading ? (
+                <ActivityIndicator color={COLORS.text} />
+            ) : (
+                <>
+                    <Text style={styles.gIcon}>G</Text>
+                    <Text style={styles.buttonText}>Continue with Google</Text>
+                </>
+            )}
         </TouchableOpacity>
     );
 };

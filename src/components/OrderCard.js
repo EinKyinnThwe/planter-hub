@@ -16,28 +16,28 @@ const formatDate = (timestamp) => {
 const OrderCard = ({ order }) => {
     return (
         <View style={styles.card}>
-        <View style={styles.headerRow}>
-            <Text style={styles.date}>{formatDate(order.createdAt)}</Text>
-            <View style={styles.statusBadge}>
-            <Text style={styles.statusText}>{order.status}</Text>
+            <View style={styles.headerRow}>
+                <Text style={styles.date}>{formatDate(order.createdAt)}</Text>
+                <View style={styles.statusBadge}>
+                    <Text style={styles.statusText}>{order.status}</Text>
+                </View>
             </View>
-        </View>
 
-        {order.items.map((item, index) => (
-            <View key={`${order.id}-${index}`} style={[styles.itemRow, styles.totalRow]}>
-            <Text style={styles.itemEmoji}>{item.emoji}</Text>
-            <Text style={styles.itemName} numberOfLines={1}>
-                {item.name}
-            </Text>
-            <Text style={styles.itemQty}>×{item.quantity}</Text>
-            <Text style={styles.itemPrice}>${(item.price * item.quantity).toFixed(2)}</Text>
+            {order.items.map((item, index) => (
+                <View key={`${order.id}-${index}`} style={[styles.itemRow, styles.totalRow]}>
+                    <Text style={styles.itemEmoji}>{item.emoji}</Text>
+                    <Text style={styles.itemName} numberOfLines={1}>
+                        {item.name}
+                    </Text>
+                    <Text style={styles.itemQty}>×{item.quantity}</Text>
+                    <Text style={styles.itemPrice}>${(item.price * item.quantity).toFixed(2)}</Text>
+                </View>
+            ))}
+
+            <View style={styles.totalRow}>
+                <Text style={styles.totalLabel}>Total</Text>
+                <Text style={styles.totalValue}>${order.totalPrice.toFixed(2)}</Text>
             </View>
-        ))}
-        
-        <View style={styles.totalRow}>
-            <Text style={styles.totalLabel}>Total</Text>
-            <Text style={styles.totalValue}>${order.totalPrice.toFixed(2)}</Text>
-        </View>
         </View>
     );
 };

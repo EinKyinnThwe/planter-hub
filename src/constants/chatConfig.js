@@ -13,17 +13,17 @@ export const AUTO_REPLY_RULES = [
     {
         keywords: ['order', 'delivery', 'shipping', 'track'],
         reply:
-        "You can check your order status anytime in the History tab. Is there a specific order you're asking about?",
+            "You can check your order status anytime in the History tab. Is there a specific order you're asking about?",
     },
     {
         keywords: ['price', 'cost', 'discount', 'offer'],
         reply:
-        'Good question! Check the Special Offers section on Home for current discounts — happy to help you find something in your budget too.',
+            'Good question! Check the Special Offers section on Home for current discounts — happy to help you find something in your budget too.',
     },
     {
         keywords: ['water', 'care', 'sunlight', 'light', 'dying', 'yellow', 'brown'],
         reply:
-        "Plant trouble? Most issues come down to overwatering or the wrong light. Tell me which plant and what you're seeing, and I'll help you sort it out.",
+            "Plant trouble? Most issues come down to overwatering or the wrong light. Tell me which plant and what you're seeing, and I'll help you sort it out.",
     },
     {
         keywords: ['return', 'refund', 'cancel'],

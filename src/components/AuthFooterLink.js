@@ -5,10 +5,10 @@ import { COLORS, SPACING, FONT_SIZES } from '../constants/theme';
 const AuthFooterLink = ({ promptText, actionText, onPress }) => {
     return (
         <View style={styles.container}>
-        <Text style={styles.promptText}>{promptText} </Text>
-        <TouchableOpacity onPress={onPress}>
-            <Text style={styles.actionText}>{actionText}</Text>
-        </TouchableOpacity>
+            <Text style={styles.promptText}>{promptText} </Text>
+            <TouchableOpacity onPress={onPress}>
+                <Text style={styles.actionText}>{actionText}</Text>
+            </TouchableOpacity>
         </View>
     );
 };

@@ -19,9 +19,9 @@ export const FavoritesProvider = ({ children }) => {
         }
 
         const unsubscribe = subscribeToFavorites(
-        user.uid,
-        (ids) => setFavoriteIds(ids),
-        (err) => console.warn('Favorites listener error:', err.message)
+            user.uid,
+            (ids) => setFavoriteIds(ids),
+            (err) => console.warn('Favorites listener error:', err.message)
         );
 
         return unsubscribe;
@@ -54,7 +54,7 @@ export const FavoritesProvider = ({ children }) => {
 
     return (
         <FavoritesContext.Provider value={{ favoriteIds, toggleFavorite, isFavorite }}>
-        {children}
+            {children}
         </FavoritesContext.Provider>
     );
 };

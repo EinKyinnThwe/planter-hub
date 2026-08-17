@@ -42,18 +42,18 @@ const ChatScreen = ({ navigation }) => {
 
     useEffect(() => {
         if (messages.length > 0) {
-        // Small delay lets the FlatList finish laying out the new row first.
-        const timeout = setTimeout(() => {
-            flatListRef.current?.scrollToEnd({ animated: true });
-        }, 50);
-        return () => clearTimeout(timeout);
+            // Small delay lets the FlatList finish laying out the new row first.
+            const timeout = setTimeout(() => {
+                flatListRef.current?.scrollToEnd({ animated: true });
+            }, 50);
+            return () => clearTimeout(timeout);
         }
     }, [messages.length, supportTyping]);
 
     const handleSend = async () => {
-            if (!text.trim()) return;
+        if (!text.trim()) return;
 
-            if (editingId) {
+        if (editingId) {
             const idToEdit = editingId;
             const newText = text;
             setEditingId(null);
@@ -75,23 +75,23 @@ const ChatScreen = ({ navigation }) => {
         if (item.senderId !== currentUserId) return; // only your own messages are editable/deletable
 
         Alert.alert('Message options', undefined, [
-        {
-            text: 'Edit',
-            onPress: () => {
-            setEditingId(item.id);
-            setText(item.text);
+            {
+                text: 'Edit',
+                onPress: () => {
+                    setEditingId(item.id);
+                    setText(item.text);
+                },
             },
-        },
-        {
-            text: 'Delete',
-            style: 'destructive',
-            onPress: () =>
-            Alert.alert('Delete message?', 'This cannot be undone.', [
-                { text: 'Cancel', style: 'cancel' },
-                { text: 'Delete', style: 'destructive', onPress: () => deleteMessage(item.id) },
-            ]),
-        },
-        { text: 'Cancel', style: 'cancel' },
+            {
+                text: 'Delete',
+                style: 'destructive',
+                onPress: () =>
+                    Alert.alert('Delete message?', 'This cannot be undone.', [
+                        { text: 'Cancel', style: 'cancel' },
+                        { text: 'Delete', style: 'destructive', onPress: () => deleteMessage(item.id) },
+                    ]),
+            },
+            { text: 'Cancel', style: 'cancel' },
         ]);
     };
 
@@ -99,122 +99,122 @@ const ChatScreen = ({ navigation }) => {
         const isMine = item.senderId === currentUserId;
 
         return (
-        <TouchableOpacity
-            activeOpacity={isMine ? 0.7 : 1}
-            onLongPress={() => handleLongPressMessage(item)}
-            style={[styles.bubbleRow, isMine ? styles.bubbleRowRight : styles.bubbleRowLeft]}
-        >
-            <View style={[styles.bubble, isMine ? styles.bubbleMine : styles.bubbleTheirs]}>
-            <Text style={[styles.bubbleText, isMine && styles.bubbleTextMine]}>{item.text}</Text>
-            </View>
-            <Text style={styles.timeText}>
-            {formatMessageTime(item.createdAt)}
-            {item.edited ? ' · edited' : ''}
-            </Text>
-        </TouchableOpacity>
+            <TouchableOpacity
+                activeOpacity={isMine ? 0.7 : 1}
+                onLongPress={() => handleLongPressMessage(item)}
+                style={[styles.bubbleRow, isMine ? styles.bubbleRowRight : styles.bubbleRowLeft]}
+            >
+                <View style={[styles.bubble, isMine ? styles.bubbleMine : styles.bubbleTheirs]}>
+                    <Text style={[styles.bubbleText, isMine && styles.bubbleTextMine]}>{item.text}</Text>
+                </View>
+                <Text style={styles.timeText}>
+                    {formatMessageTime(item.createdAt)}
+                    {item.edited ? ' · edited' : ''}
+                </Text>
+            </TouchableOpacity>
         );
     };
 
     return (
         <SafeAreaView style={styles.safeArea}>
-        {/* Header */}
-        <View style={styles.header}>
-            <TouchableOpacity
-            onPress={() => navigation.canGoBack() && navigation.goBack()}
-            hitSlop={8}
-            style={styles.backButton}
-            >
-            {navigation.canGoBack() && <Text style={styles.backArrow}>{'\u2190'}</Text>}
-            </TouchableOpacity>
-
-            <View style={styles.avatarCircle}>
-            <Text style={styles.avatarEmoji}>🌿</Text>
-            </View>
-
-            <View style={styles.headerInfo}>
-            <Text style={styles.headerName}>{SUPPORT_NAME}</Text>
-            <View style={styles.statusRow}>
-                <View
-                style={[
-                    styles.statusDot,
-                    !SUPPORT_ONLINE && !supportTyping && styles.statusDotOffline,
-                ]}
-                />
-                <Text style={styles.statusText}>
-                {supportTyping ? 'Typing…' : SUPPORT_ONLINE ? 'Online' : 'Offline'}
-                </Text>
-            </View>
-            </View>
-
-            <View style={{ width: 24 }} />
-        </View>
-
-        <KeyboardAvoidingView
-            style={{ flex: 1 }}
-            behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-            keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
-        >
-            {/* Message list */}
-            {loading ? (
-            <View style={styles.centered}>
-                <ActivityIndicator size="large" color={COLORS.primary} />
-            </View>
-            ) : error ? (
-            <View style={styles.centered}>
-                <Text style={styles.errorText}>{error}</Text>
-            </View>
-            ) : messages.length === 0 ? (
-            <View style={styles.centered}>
-                <Text style={styles.emptyEmoji}>💬</Text>
-                <Text style={styles.emptyText}>Say hello — we're happy to help!</Text>
-            </View>
-            ) : (
-            <FlatList
-                ref={flatListRef}
-                data={messages}
-                keyExtractor={(item) => item.id}
-                renderItem={renderMessage}
-                contentContainerStyle={styles.listContent}
-                onContentSizeChange={() => flatListRef.current?.scrollToEnd({ animated: true })}
-                ListFooterComponent={
-                supportTyping ? (
-                    <View style={[styles.bubbleRow, styles.bubbleRowLeft]}>
-                    <View style={[styles.bubble, styles.bubbleTheirs, styles.typingBubble]}>
-                        <Text style={styles.bubbleText}>•••</Text>
-                    </View>
-                    </View>
-                ) : null
-                }
-            />
-            )}
-
-            {/* Input bar */}
-            {editingId && (
-            <View style={styles.editingBanner}>
-                <Text style={styles.editingBannerText}>Editing message</Text>
-                <TouchableOpacity onPress={cancelEditing} hitSlop={6}>
-                <Text style={styles.editingBannerCancel}>Cancel</Text>
+            {/* Header */}
+            <View style={styles.header}>
+                <TouchableOpacity
+                    onPress={() => navigation.canGoBack() && navigation.goBack()}
+                    hitSlop={8}
+                    style={styles.backButton}
+                >
+                    {navigation.canGoBack() && <Text style={styles.backArrow}>{'\u2190'}</Text>}
                 </TouchableOpacity>
+
+                <View style={styles.avatarCircle}>
+                    <Text style={styles.avatarEmoji}>🌿</Text>
+                </View>
+
+                <View style={styles.headerInfo}>
+                    <Text style={styles.headerName}>{SUPPORT_NAME}</Text>
+                    <View style={styles.statusRow}>
+                        <View
+                            style={[
+                                styles.statusDot,
+                                !SUPPORT_ONLINE && !supportTyping && styles.statusDotOffline,
+                            ]}
+                        />
+                        <Text style={styles.statusText}>
+                            {supportTyping ? 'Typing…' : SUPPORT_ONLINE ? 'Online' : 'Offline'}
+                        </Text>
+                    </View>
+                </View>
+
+                <View style={{ width: 24 }} />
             </View>
-            )}
-            <View style={styles.inputRow}>
-            <TextInput
-                style={styles.input}
-                placeholder="Type a message"
-                placeholderTextColor={COLORS.placeholder}
-                value={text}
-                onChangeText={setText}
-                multiline
-            />
-            <TouchableOpacity
-                style={[styles.sendButton, (!text.trim() || sending) && styles.sendButtonDisabled]}
-                onPress={handleSend}
-                disabled={!text.trim() || sending}
+
+            <KeyboardAvoidingView
+                style={{ flex: 1 }}
+                behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+                keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
             >
-                <Text style={styles.sendButtonText}>{editingId ? '✓' : '➤'}</Text>
-            </TouchableOpacity>
-            </View>
-        </KeyboardAvoidingView>
+                {/* Message list */}
+                {loading ? (
+                    <View style={styles.centered}>
+                        <ActivityIndicator size="large" color={COLORS.primary} />
+                    </View>
+                ) : error ? (
+                    <View style={styles.centered}>
+                        <Text style={styles.errorText}>{error}</Text>
+                    </View>
+                ) : messages.length === 0 ? (
+                    <View style={styles.centered}>
+                        <Text style={styles.emptyEmoji}>💬</Text>
+                        <Text style={styles.emptyText}>Say hello — we're happy to help!</Text>
+                    </View>
+                ) : (
+                    <FlatList
+                        ref={flatListRef}
+                        data={messages}
+                        keyExtractor={(item) => item.id}
+                        renderItem={renderMessage}
+                        contentContainerStyle={styles.listContent}
+                        onContentSizeChange={() => flatListRef.current?.scrollToEnd({ animated: true })}
+                        ListFooterComponent={
+                            supportTyping ? (
+                                <View style={[styles.bubbleRow, styles.bubbleRowLeft]}>
+                                    <View style={[styles.bubble, styles.bubbleTheirs, styles.typingBubble]}>
+                                        <Text style={styles.bubbleText}>•••</Text>
+                                    </View>
+                                </View>
+                            ) : null
+                        }
+                    />
+                )}
+
+                {/* Input bar */}
+                {editingId && (
+                    <View style={styles.editingBanner}>
+                        <Text style={styles.editingBannerText}>Editing message</Text>
+                        <TouchableOpacity onPress={cancelEditing} hitSlop={6}>
+                            <Text style={styles.editingBannerCancel}>Cancel</Text>
+                        </TouchableOpacity>
+                    </View>
+                )}
+                <View style={styles.inputRow}>
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Type a message"
+                        placeholderTextColor={COLORS.placeholder}
+                        value={text}
+                        onChangeText={setText}
+                        multiline
+                    />
+                    <TouchableOpacity
+                        style={[styles.sendButton, (!text.trim() || sending) && styles.sendButtonDisabled]}
+                        onPress={handleSend}
+                        disabled={!text.trim() || sending}
+                    >
+                        <Text style={styles.sendButtonText}>{editingId ? '✓' : '➤'}</Text>
+                    </TouchableOpacity>
+                </View>
+            </KeyboardAvoidingView>
         </SafeAreaView>
     );
 };

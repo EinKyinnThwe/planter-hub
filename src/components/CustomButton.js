@@ -1,9 +1,9 @@
 import React from 'react';
 import {
-    TouchableOpacity,
-    Text,
-    StyleSheet,
-    ActivityIndicator,
+	TouchableOpacity,
+	Text,
+	StyleSheet,
+	ActivityIndicator,
 } from 'react-native';
 import { COLORS, SPACING, FONT_SIZES } from '../constants/theme';
 
@@ -16,20 +16,20 @@ const CustomButton = ({
 }) => {
 	return (
 		<TouchableOpacity
-		style={[
-			styles.button,
-			variant === 'danger' && styles.buttonDanger,
-			(disabled || loading) && styles.buttonDisabled,
-		]}
-		onPress={onPress}
-		activeOpacity={0.8}
-		disabled={disabled || loading}
+			style={[
+				styles.button,
+				variant === 'danger' && styles.buttonDanger,
+				(disabled || loading) && styles.buttonDisabled,
+			]}
+			onPress={onPress}
+			activeOpacity={0.8}
+			disabled={disabled || loading}
 		>
-		{loading ? (
-			<ActivityIndicator color={COLORS.white} />
-		) : (
-			<Text style={styles.buttonText}>{title}</Text>
-		)}
+			{loading ? (
+				<ActivityIndicator color={COLORS.white} />
+			) : (
+				<Text style={styles.buttonText}>{title}</Text>
+			)}
 		</TouchableOpacity>
 	);
 };

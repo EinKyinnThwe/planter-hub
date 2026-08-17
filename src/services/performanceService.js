@@ -20,10 +20,10 @@ export const measureAsync = async (name, fn, attributes = {}) => {
     const t = await startTrace(name);
     try {
         const result = await fn();
-        await stopTrace(t, { ...attributes, outcome: 'success!'});
+        await stopTrace(t, { ...attributes, outcome: 'success!' });
         return result;
     } catch (error) {
-        await stopTrace(t, { ...attributes, outcome: 'fail!'});
+        await stopTrace(t, { ...attributes, outcome: 'fail!' });
         throw error;
     }
 };

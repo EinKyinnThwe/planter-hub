@@ -5,13 +5,13 @@ import { COLORS, SPACING, FONT_SIZES } from '../constants/theme';
 const EmptyNotifications = () => {
     return (
         <View style={styles.container}>
-        <View style={styles.iconCircle}>
-            <Text style={styles.icon}>🔔</Text>
-        </View>
-        <Text style={styles.title}>You're all caught up</Text>
-        <Text style={styles.subtitle}>
-            Order updates, restocks, and offers will show up here.
-        </Text>
+            <View style={styles.iconCircle}>
+                <Text style={styles.icon}>🔔</Text>
+            </View>
+            <Text style={styles.title}>You're all caught up</Text>
+            <Text style={styles.subtitle}>
+                Order updates, restocks, and offers will show up here.
+            </Text>
         </View>
     );
 };

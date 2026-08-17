@@ -8,12 +8,12 @@ export const CartProvider = ({ children }) => {
     const addToCart = (plant, quantity = 1) => {
         setItems((prev) => {
             const existing = prev.find((i) => i.plant.id === plant.id);
-        if (existing) {
-            return prev.map((i) =>
-                i.plant.id === plant.id ? { ...i, quantity: i.quantity + quantity } : i
-            );
-        }
-        return [...prev, { plant, quantity }];
+            if (existing) {
+                return prev.map((i) =>
+                    i.plant.id === plant.id ? { ...i, quantity: i.quantity + quantity } : i
+                );
+            }
+            return [...prev, { plant, quantity }];
         });
     };
 
@@ -22,7 +22,7 @@ export const CartProvider = ({ children }) => {
     };
 
     const updateQuantity = (plantId, quantity) => {
-            setItems((prev) =>
+        setItems((prev) =>
             prev.map((i) =>
                 i.plant.id === plantId ? { ...i, quantity: Math.max(1, quantity) } : i
             )
@@ -33,9 +33,9 @@ export const CartProvider = ({ children }) => {
 
     return (
         <CartContext.Provider
-        value={{ items, addToCart, removeFromCart, updateQuantity, clearCart }}
+            value={{ items, addToCart, removeFromCart, updateQuantity, clearCart }}
         >
-        {children}
+            {children}
         </CartContext.Provider>
     );
 };

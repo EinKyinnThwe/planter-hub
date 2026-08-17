@@ -11,7 +11,7 @@ export default function useGoogleSignIn(onSuccess) {
     const handleGoogleSignIn = async () => {
         setLoading(true);
         setError(null);
-        
+
         const performanceTrace = await startTrace('google_sign_in');
 
         const { user, error: signInError } = await signInWithGoogle();
@@ -19,27 +19,27 @@ export default function useGoogleSignIn(onSuccess) {
         if (signInError) {
             setLoading(false);
             setError(signInError);
-            await stopTrace(performanceTrace, { outcome: 'google_sign_in_error'});
+            await stopTrace(performanceTrace, { outcome: 'google_sign_in_error' });
             return;
         }
 
         if (!user) {
             // User cancelled the Google sheet.
             setLoading(false);
-            await stopTrace(performanceTrace, { outcome: 'google_sign_in_cancelled!'});
+            await stopTrace(performanceTrace, { outcome: 'google_sign_in_cancelled!' });
             return;
         }
 
         try {
             const { isNewUser } = await ensureUserProfile(user);
-        if (isNewUser) {
-            await seedProductsIfEmpty();
-        }
-            await stopTrace(performanceTrace, {outcome: 'googel_sign_in_success!', isNewUser: String(isNewUser) });
+            if (isNewUser) {
+                await seedProductsIfEmpty();
+            }
+            await stopTrace(performanceTrace, { outcome: 'googel_sign_in_success!', isNewUser: String(isNewUser) });
             onSuccess && onSuccess(user);
         } catch (err) {
             setError('Signed in, but setup failed. Please try again.');
-            await stopTrace(performanceTrace, {outcome: 'profile_set_up_error!'});
+            await stopTrace(performanceTrace, { outcome: 'profile_set_up_error!' });
         } finally {
             setLoading(false);
         }

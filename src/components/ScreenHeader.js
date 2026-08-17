@@ -11,30 +11,30 @@ const ScreenHeader = ({
 }) => {
     return (
         <View style={styles.container}>
-        <View style={styles.side}>
-            {showBack && (
-            <TouchableOpacity onPress={onBackPress} hitSlop={8}>
-                <Text style={styles.backArrow}>{'\u2190'}</Text>
-            </TouchableOpacity>
-            )}
-        </View>
-
-        <Text style={styles.title} numberOfLines={1}>
-            {title}
-        </Text>
-
-        <View style={[styles.side, styles.rightSide]}>
-            {typeof cartCount === 'number' && (
-            <TouchableOpacity onPress={onCartPress} hitSlop={8} style={styles.cartButton}>
-                <Text style={styles.cartIcon}>🛒</Text>
-                {cartCount > 0 && (
-                <View style={styles.badge}>
-                    <Text style={styles.badgeText}>{cartCount}</Text>
-                </View>
+            <View style={styles.side}>
+                {showBack && (
+                    <TouchableOpacity onPress={onBackPress} hitSlop={8}>
+                        <Text style={styles.backArrow}>{'\u2190'}</Text>
+                    </TouchableOpacity>
                 )}
-            </TouchableOpacity>
-            )}
-        </View>
+            </View>
+
+            <Text style={styles.title} numberOfLines={1}>
+                {title}
+            </Text>
+
+            <View style={[styles.side, styles.rightSide]}>
+                {typeof cartCount === 'number' && (
+                    <TouchableOpacity onPress={onCartPress} hitSlop={8} style={styles.cartButton}>
+                        <Text style={styles.cartIcon}>🛒</Text>
+                        {cartCount > 0 && (
+                            <View style={styles.badge}>
+                                <Text style={styles.badgeText}>{cartCount}</Text>
+                            </View>
+                        )}
+                    </TouchableOpacity>
+                )}
+            </View>
         </View>
     );
 };
